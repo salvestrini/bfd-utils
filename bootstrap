@@ -1,0 +1,129 @@
+#!/bin/sh
+
+#
+# bootstrap
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+ME=bootstrap
+
+#
+# Internal functions
+#
+missing ()
+{
+    PROGRAM=$1
+
+    if test x"$PROGRAM" = x""; then
+	return 1
+    fi
+    IFS=":"
+
+    for i in $PATH
+    do
+
+	if test -f $i/$PROGRAM; then
+	    echo $i/$PROGRAM
+	    return 0
+	fi
+    done
+
+    return 1
+}
+
+#
+# External tools
+#
+AUTOHEADER=`missing autoheader`
+ACLOCAL=`missing aclocal`
+AUTOCONF=`missing autoconf`
+AUTOMAKE=`missing automake`
+AUTORECONF=`missing autoreconf`
+LIBTOOL=`( missing glibtool || missing libtool )`
+LIBTOOLIZE=`( missing glibtoolize || missing libtoolize)`
+GNULIBTOOL=`missing gnulib-tool`
+GIT=`missing git`
+SED=`missing sed`
+
+#
+# Dump some useful informations
+#
+echo "$ME: Dumping build-tools information ..."
+for tool in	\
+    $SED        \
+    $GIT        \
+    $AUTOHEADER	\
+    $AUTOCONF	\
+    $LIBTOOL	\
+    $LIBTOOLIZE	\
+    $ACLOCAL	\
+    $AUTOMAKE	\
+    $AUTORECONF	\
+    $GNULIBTOOL \
+    ;
+do
+    if test -n "$tool" ; then
+	TOOLVER=`$tool --version | head -1`
+	echo "$ME:  $tool -> $TOOLVER"
+    fi
+done
+
+#
+# Prevent running bootstrap on a non-repository copy
+#
+$GIT log > /dev/null 2>&1 || {
+    echo "$ME: I must run on a git clone ..."
+    exit 1
+}
+if test x"`$GIT tag -l 2>/dev/null | $SED -n '$='`" = x""; then
+    echo "$ME: I require a repository tag in order to run ..."
+    exit 1
+fi
+
+#
+# Remove files left from the previous run
+#
+echo "$ME: Removing autotools related files and directories ..."
+rm -f  `find ./ -name "Makefile.in"`                 || exit 1
+rm -f  config.cache aclocal.m4 config.h.in configure || exit 1
+rm -f  config.guess config.sub ltmain.sh             || exit 1
+rm -rf autom4te.cache                                || exit 1
+rm -rf `find ./ -name ".deps"`                       || exit 1
+
+#
+# configure.ac
+#
+echo "$ME: Building configure.ac from configure.ac.in"
+rm -f configure.ac
+VERSION=`git tag -l | sort -s -t '.' -k 1,1n -k 2,2n -k 3,3n | tail -n 1`
+cat configure.ac.in | sed -e 's,[@]VERSION[@],'$VERSION',' > configure.ac || \
+    { rm -f configure.ac ; exit 1 ; }
+chmod a-w configure.ac
+
+#
+# autoreconf
+#
+echo "$ME: Handling autotools bootstrap ..."
+
+echo "$ME: Running autoreconf ..."
+$ACLOCAL    --force --install -I ./tools/autotools/m4 && \
+    $AUTORECONF --verbose --force --install -Wall         || {
+    exit 1
+}
+
+exit 0

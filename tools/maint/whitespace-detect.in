@@ -1,0 +1,106 @@
+#! @PERL@
+
+#
+# whitespace-detect.in
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+use strict;
+use warnings;
+
+my $program = "whitespace-detect";
+my $version = "0.1";
+
+sub hint ($)
+{
+    my $string = shift;
+
+    if (defined($string)) {
+	print "$program: " . $string . "\n";
+    }
+    print "Try `$program --help' for more information.\n";
+}
+
+sub help ()
+{
+    print "Usage: $program [OPTION]... FILE...\n";
+    print "\n";
+    print "    Check input file trailing whitespaces.\n";
+    print "\n";
+    print "OPTIONS:\n";
+    print "\n";
+    print "    --help,    -h    display this help and exit\n";
+    print "    --version, -v    output version information and exit\n";
+    print "\n";
+    print "Report bugs to <" . '@PACKAGE_BUGREPORT@' . ">\n";
+}
+
+sub version ()
+{
+    print "$program $version\n";
+    print "Written by Francesco Salvestrini.\n";
+    print "\n";
+    print "This is free software; see the source for copying conditions.  There is NO\n";
+    print "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n";
+}
+
+if ($#ARGV < 0) {
+    hint("Missing parameters");
+    exit 1;
+}
+
+if (($ARGV[0] eq "--help") ||
+    ($ARGV[0] eq "-h")) {
+    help();
+    exit 0
+}
+
+if (($ARGV[0] eq "--version") ||
+    ($ARGV[0] eq "-v")) {
+    version();
+    exit 0;
+}
+
+my $found = 0;
+for my $i (0 .. $#ARGV) {
+    my $filename;
+    my $filehandle;
+
+    $filename = $ARGV[$i];
+    
+    if (!open($filehandle, "<", $filename)) {
+	print STDERR "$program: Cannot open \`" . $filename . "' for input\n";
+	exit 1;
+    }
+
+    while (<$filehandle>) {
+	if ($_ =~ /[ \t]+$/) {
+	    $found = 1;
+	    print STDERR
+		"$program: File \`" . $filename . "' " .
+		"contains extra whites\n";
+
+	    last;
+	}
+    }
+
+    close($filehandle);
+}
+
+#exit $found;
+exit 0;

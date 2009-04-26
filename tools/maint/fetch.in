@@ -1,0 +1,84 @@
+#! @SHELL@
+
+#
+# fetch.in
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+me="fetch"
+version="0.1"
+
+WGET=@WGET@
+
+case $1 in
+    -h|--help)
+	echo "Usage: $me URL FILE"
+	echo ""
+	echo "Fetch file from URL, placing output in FILE"
+	echo ""
+	echo "OPTIONS:"
+	echo ""
+	echo "  -h, --help       display this help and exit"
+	echo "  -v, --version    output version information and exit"
+	echo ""
+	echo "Report bugs to <@PACKAGE_BUGREPORT@>"
+	exit 0
+	;;
+    -v|--version)
+	echo "$me (@PACKAGE_NAME@) $version"
+	echo "Written by Francesco Salvestrini."
+	echo ""
+	echo "This is free software; see the source for copying conditions.  There is NO"
+	echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+	exit 0
+	;;
+esac
+
+URL=$1
+FILE=$2
+
+if test "$WGET" = "" ; then
+    echo "$me: Missing wget executable ..."
+    exit 1
+fi
+if test "$URL" = "" ; then
+    echo "$me: Missing input URL"
+    echo "Try \`$program --help' for more information."
+    exit 1
+fi
+if test "$FILE" = "" ; then
+    echo "$me: Missing output file"
+    echo "Try \`$program --help' for more information."
+    exit 1
+fi
+
+echo "$me: $URL"
+rm -f $FILE
+$WGET --no-verbose -q -O $FILE -- $URL || {
+    echo "$me: Cannot fetch $URL"
+    rm -f $FILE
+    exit 1
+}
+
+if test ! -s $FILE ; then
+    echo "$me: $URL not fetched ?"
+    rm -f $FILE
+    exit 1
+fi
+
+exit 0

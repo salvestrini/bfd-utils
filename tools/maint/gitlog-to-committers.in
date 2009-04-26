@@ -1,0 +1,144 @@
+#! @PERL@
+
+#
+# gitlog-to-committers
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# This program is based on gitlog-to-changelog by Jim Meyering
+#
+
+use strict;
+use warnings;
+use Getopt::Long;
+use POSIX qw(strftime);
+
+(my $ME = $0) =~ s|.*/||;
+my $VERSION = "0.1";
+
+my $PACKAGE_NAME      = '@PACKAGE_NAME@';
+my $PACKAGE_BUGREPORT = '@PACKAGE_BUGREPORT@';
+my $PACKAGE_VERSION   = '@PACKAGE_VERSION@';
+
+END {
+    defined fileno STDOUT or return;
+    close STDOUT and return;
+    warn "$ME: failed to close standard output: $!\n";
+    $? ||= 1;
+}
+
+sub usage ($)
+{
+    my ($exit_code) = @_;
+    my $STREAM = ($exit_code == 0 ? *STDOUT : *STDERR);
+    if ($exit_code != 0) {
+	print $STREAM "Try `$ME --help' for more information.\n";
+    } else {
+	print $STREAM <<EOF;
+Usage: $ME [OPTIONS]
+
+Output git committers names.
+
+OPTIONS:
+
+      --since=DATE    convert only the logs since DATE;
+                      the default is to convert all log entries.
+  -h, --help          display this help and exit
+      --version       output version information and exit
+
+EXAMPLE:
+
+  $ME --since=2008-01-01 > AUTHORS
+
+Report bugs to <${PACKAGE_BUGREPORT}>
+EOF
+    }
+    exit($exit_code);
+}
+
+# If the string $S is a well-behaved file name, simply return it.
+# If it contains white space, quotes, etc., quote it, and return the new string.
+sub shell_quote($)
+{
+    my ($s) = @_;
+    if ($s =~ m![^\w+/.,-]!) {
+	# Convert each single quote to '\''
+	$s =~ s/\'/\'\\\'\'/g;
+	# Then single quote the string.
+	$s = "'$s'";
+    }
+    return $s;
+}
+
+sub quoted_cmd(@)
+{
+    return join (' ', map {shell_quote $_} @_);
+}
+
+{
+    my $since_date = '1970-01-01 UTC';
+    GetOptions(
+	'h|help'    => sub { usage 0 },
+	'version'   => sub { print "$ME ($PACKAGE_NAME) $VERSION\n"; exit(0); },
+	'since=s' => \$since_date,
+	) or usage 1;
+
+    @ARGV
+	and (warn "$ME: too many arguments\n"), usage 1;
+
+    my @cmd = (qw (git shortlog --summary), "--since=$since_date");
+    open PIPE, '-|', @cmd
+	or die ("$ME: failed to run `". quoted_cmd (@cmd) ."': $!\n" .
+		"(Is your Git too old?  Version 1.5.1 or later required.)\n");
+
+    my %committers;
+    my $total = 0;
+    while (<PIPE>) {
+	my $line = $_;
+
+	defined($line) or last;
+	chomp($line);
+
+	if ($line =~ /^\s*(\d+)\s+([\w\s]+)\s*$/) {
+	    defined($1) or die "$ME: Wrong commits count";
+	    defined($2) or die "$ME: Wrong committer name";
+
+	    my $commits = int($1);
+	    my $name    = $2;
+
+	    if (defined($committers{$name})) {
+		die "$ME: Duplicated name found, fix your .mailmap";
+	    }
+	    $committers{$name} = $commits;
+	    $total = $total + $commits;
+	} else {
+	    die "$ME: Unhandled line found ('$line')";
+	}
+    }
+
+    my @keys = sort { $committers{$a} < $committers{$b} } keys %committers;
+    foreach my $name (@keys) {
+	print "$name\n";
+	$total -= $committers{$name};
+    }
+
+    ($total == 0) or die("Bug found (total = $total)");
+
+    close PIPE
+	or die "$ME: error closing pipe from " . quoted_cmd (@cmd) . "\n";
+    # FIXME-someday: include $PROCESS_STATUS in the diagnostic
+}

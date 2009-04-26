@@ -1,0 +1,89 @@
+##
+## Include file for automake
+##
+## Copyright (C) 2008, 2009 Francesco Salvestrini
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License along
+## with this program; if not, write to the Free Software Foundation, Inc.,
+## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+##
+
+##
+## NOTE:
+##     Don't use `/' in sed expression(s) since most likely the variables
+##     we're using, such as `$(pkgdatadir)', will contain some of them ...
+
+do_subst_AUTOTOOLS = \
+  -e 's,[@]PACKAGE[@],$(PACKAGE),g' \
+  -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' \
+  -e 's,[@]PACKAGE_BUGREPORT[@],$(PACKAGE_BUGREPORT),g' \
+  -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' \
+  -e 's,[@]PATH_SEPARATOR[@],$(PATH_SEPARATOR),g' \
+  -e 's,[@]SHELL[@],$(SHELL),g' \
+  \
+  -e 's,[@]bindir[@],$(bindir),g' \
+  -e 's,[@]builddir[@],$(builddir),g' \
+  -e 's,[@]abs_builddir[@],$(abs_builddir),g' \
+  -e 's,[@]abs_top_srcdir[@],$(abs_top_srcdir),g' \
+  -e 's,[@]abs_top_builddir[@],$(abs_top_builddir),g'
+
+do_subst_GENERIC = \
+  -e 's,[@]configure_input[@],Generated from $@.in; do not edit by hand.,g' \
+  -e 's,[@]makefile_input[@],Generated from $@.am; do not edit by hand.,g' \
+  -e 's,[@]VERSION[@],$(VERSION),g' \
+  -e 's,[@]API_VERSION[@],$(API_VERSION),g' \
+  -e 's,[@]pkgvbindir[@],$(pkgvbindir),g' \
+  -e 's,[@]pkgvlibsdir[@],$(pkgvlibsdir),g' \
+  -e 's,[@]pkgvdatadir[@],$(pkgvdatadir),g'
+
+do_subst_MAINTAINER = \
+  -e 's,[@]WGET[@],$(WGET),g'
+
+do_subst_SPECIFIC = \
+  -e 's,[@]PYTHON[@],$(PYTHON),g' \
+  -e 's,[@]XSLTPROC[@],$(XSLTPROC),g' \
+  -e 's,[@]SED[@],$(SED),g' \
+  -e 's,[@]DEVTODO[@],$(DEVTODO),g' \
+  -e 's,[@]DEVTODO_VERSION[@],$(DEVTODO_VERSION),g' \
+  -e 's,[@]pkgvpythondir[@],$(pkgvpythondir),g' \
+  -e 's,[@]sysconfdir[@],$(sysconfdir),g'
+
+do_subst = $(SED) \
+  $(do_subst_AUTOTOOLS) \
+  $(do_subst_GENERIC) \
+  $(do_subst_MAINTAINER) \
+  $(do_subst_SPECIFIC)
+
+WHITESPACE_DETECT   = $(top_builddir)/tools/maint/whitespace-detect
+FETCH               = $(top_builddir)/tools/maint/fetch
+GITTAG_TO_DATE      = $(top_builddir)/tools/maint/gittag-to-date
+GITLOG_TO_CHANGELOG = $(top_srcdir)/tools/maint/gitlog-to-changelog
+GIT_VERSION_GEN     = $(top_srcdir)/tools/maint/git-version-gen
+ANNOUNCE_GEN        = $(top_srcdir)/tools/maint/announce-gen
+
+##
+## Maintainer related targets
+##
+maintainer-check: Makefile maintainer-check-local maintainer-check-recursive
+
+maintainer-check-recursive: Makefile
+	@list='$(SUBDIRS)'; for subdir in $$list; do \
+		test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) maintainer-check); \
+	done
+
+update: Makefile update-local update-recursive
+
+update-recursive: Makefile
+	@list='$(SUBDIRS)'; for subdir in $$list; do \
+		test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) update); \
+	done
