@@ -25,7 +25,7 @@ config.status
 
 src/elf-section-ls
 src/elf-section-mv
-src/elf-stat
+src/elf-section-stat
 src/elf-symbol-find
 
 src/gnulib/sys/stat.h

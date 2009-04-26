@@ -45,7 +45,7 @@ elf_symbol_find_LDADD =				\
 	$(common_LDADD)
 
 elf_section_stat_SOURCES =			\
-	elf-stat.c
+	elf-section-stat.c
 elf_section_stat_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="elf-section-stat"'	\
 	$(EXTRA_CPPFLAGS)
