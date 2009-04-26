@@ -54,12 +54,11 @@ tools/autotools/config.guess
 tools/autotools/config.sub
 
 #docs/man/fcp.1
-#docs/info/fcp.info
 
-#site/in/.sitetool
-#site/in/site.stamp
-#site/in/todos.sxml
-#site/in/todos.dump
-#site/in/news.sxml
-#site/in/news.dump
-#site/out/*
+site/in/.sitetool
+site/in/site.stamp
+site/in/todos.sxml
+site/in/todos.dump
+site/in/news.sxml
+site/in/news.dump
+site/out/*
