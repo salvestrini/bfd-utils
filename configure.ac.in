@@ -28,7 +28,7 @@ AC_PREREQ([2.61])
 # Place/find all autotools related files in the following directories
 AC_CONFIG_AUX_DIR([tools/autotools])
 AC_CONFIG_MACRO_DIR([tools/autotools/m4])
-AC_CONFIG_SRCDIR([src/elf-stat.c])
+AC_CONFIG_SRCDIR([src/elf-section-stat.c])
 
 #
 # For automake options (AM_INIT_AUTOMAKE options) see Makefile.am
@@ -51,13 +51,13 @@ AC_PROG_CC
 AC_PROG_CC_C_O
 AC_PROG_RANLIB
 
-AX_PATH_MISSING([HELP2MAN], [help2man])
-AX_PATH_MISSING([SITETOOL], [sitetool])
-AX_PATH_MISSING([WGET],     [wget])
-AX_PATH_MISSING([PERL],     [perl])
+AX_PATH_MISSING([HELP2MAN],    [help2man])
+AX_PATH_MISSING([SITETOOL],    [sitetool])
+AX_PATH_MISSING([WGET],        [wget])
+AX_PATH_MISSING([PERL],        [perl])
 
-AC_PATH_PROG([DEVTODO],              [devtodo])
-AX_PROG_DEVTODO_VERSION([1.2.0],[:])
+AC_PATH_PROG([DEVTODO],        [devtodo])
+AC_PATH_PROG([DEVTODO_TO_DNT], [devtodo])
 
 #
 # Runtime related programs

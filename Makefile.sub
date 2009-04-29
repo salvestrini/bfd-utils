@@ -47,7 +47,9 @@ do_subst_GENERIC = \
   -e 's,[@]pkgvdatadir[@],$(pkgvdatadir),g'
 
 do_subst_MAINTAINER = \
-  -e 's,[@]WGET[@],$(WGET),g'
+  -e 's,[@]WGET[@],$(WGET),g' \
+  -e 's,[@]DNT[@],$(DNT),g' \
+  -e 's,[@]DEVTODO_TO_DNT[@],$(DEVTODO_TO_DNT),g'
 
 do_subst_SPECIFIC = \
   -e 's,[@]PYTHON[@],$(PYTHON),g' \
