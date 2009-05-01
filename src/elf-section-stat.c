@@ -42,6 +42,7 @@ void callback(bfd * abfd, asection * sect, void * obj)
 {
 	struct callback_data * data;
         const char *           name;
+        struct entry *         tmp;
 
 	BUG_ON(abfd  == NULL);
 	BUG_ON(sect  == NULL);
@@ -52,16 +53,18 @@ void callback(bfd * abfd, asection * sect, void * obj)
         name = bfd_section_name(abfd, sect);
         BUG_ON(name == NULL);
 
-        struct entry * tmp;
+        debug("Callback called for `%s'\n", name);
 
         /* Find the section in our list */
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
+                debug("Comparing `%s'\n", tmp->name);
                 BUG_ON(tmp->name == NULL);
                 if (!strcmp(tmp->name, name)) {
                         /* Got it */
                         break;
                 }
         }
+
         if (tmp == NULL) {
                 /* Not found ... */
                 debug("Building new entry for section `%s'\n", name);
@@ -69,11 +72,11 @@ void callback(bfd * abfd, asection * sect, void * obj)
                 tmp->name = xstrdup(name);
                 tmp->size = sect->size;
                 tmp->next = NULL;
-        }
 
-        /* Head add */
-        tmp->next  = data->head;
-        data->head = tmp;
+                /* Add it */
+                tmp->next  = data->head;
+                data->head = tmp;
+        }
 }
 
 void help(void)
