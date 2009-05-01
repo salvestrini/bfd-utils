@@ -99,7 +99,7 @@ void dump(struct callback_data * data)
         size_t         max_name_length;
         bfd_size_type  size_total;
 
-        debug("Dumping entries\n");
+        debug("Computing starting values\n");
 
         BUG_ON(data == NULL);
 
@@ -110,16 +110,21 @@ void dump(struct callback_data * data)
                 size_total      = size_total + tmp->size;
         }
 
+        debug("max_name_length = %d\n", max_name_length);
+        debug("size_total      = %d\n", size_total);
+
         BUG_ON(max_name_length == 0);
         BUG_ON(size_total      <= 0);
 
+        debug("Dumping entries\n");
+
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-                message("%-*s  %*d  [ %02.2f ]\n",
+                message("  %-*s  %*d  [ %5.2f ]\n",
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
                         tmp->size,
-                        (((float) tmp->size) / ((float) size_total)) * 100);
+                        tmp->size / size_total * 100);
         }
 }
 
@@ -190,7 +195,7 @@ int main(int argc, char * argv[])
         bfd_map_over_sections(bfd_in, callback, &data);
 
         dump(&data);
-	
+
         bfd_close(bfd_in);
 
 	exit(EXIT_SUCCESS);
