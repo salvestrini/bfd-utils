@@ -27,22 +27,14 @@ EXTRA_DIST =
 ## Programs
 
 bin_PROGRAMS =					\
-	elf-symbol-find				\
 	elf-section-stat			\
 	elf-section-ls				\
-	elf-section-mv
+	elf-section-mv				\
+	elf-section-remangle
 
 common_LDADD =					\
 	libcommon.a				\
 	-lbfd
-
-elf_symbol_find_SOURCES =			\
-	elf-symbol-find.c
-elf_symbol_find_CPPFLAGS =			\
-	-D 'PROGRAM_NAME="elf-symbol-find"'	\
-	$(EXTRA_CPPFLAGS)
-elf_symbol_find_LDADD =				\
-	$(common_LDADD)
 
 elf_section_stat_SOURCES =			\
 	elf-section-stat.c
@@ -50,7 +42,8 @@ elf_section_stat_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="elf-section-stat"'	\
 	$(EXTRA_CPPFLAGS)
 elf_section_stat_LDADD =			\
-	$(common_LDADD)
+	$(common_LDADD)				\
+	-lm
 
 elf_section_ls_SOURCES =			\
 	elf-section-ls.c
@@ -58,7 +51,8 @@ elf_section_ls_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="elf-section-ls"'	\
 	$(EXTRA_CPPFLAGS)
 elf_section_ls_LDADD =				\
-	$(common_LDADD)
+	$(common_LDADD)				\
+	-lm
 
 elf_section_mv_SOURCES =			\
 	elf-section-mv.c
@@ -66,6 +60,14 @@ elf_section_mv_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="elf-section-mv"'	\
 	$(EXTRA_CPPFLAGS)
 elf_section_mv_LDADD =				\
+	$(common_LDADD)
+
+elf_section_remangle_SOURCES =			\
+	elf-section-remangle.c
+elf_section_remangle_CPPFLAGS =				\
+	-D 'PROGRAM_NAME="elf-section-remangle"'	\
+	$(EXTRA_CPPFLAGS)
+elf_section_remangle_LDADD =			\
 	$(common_LDADD)
 
 
@@ -77,8 +79,8 @@ noinst_LIBRARIES =				\
 libcommon_a_SOURCES =				\
 	log.c					\
 	log.h					\
-	elf-lib.c				\
-	elf-lib.h
+	utils.c					\
+	utils.h
 libcommon_a_CPPFLAGS =				\
 	$(EXTRA_CPPFLAGS)
 

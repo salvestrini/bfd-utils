@@ -85,6 +85,9 @@ AC_SUBST(pkgvdatadir,   ["\${datadir}/${PACKAGE}-${API_VERSION}/data"])
 AC_SUBST(pkgvlibsdir,   ["\${datadir}/${PACKAGE}-${API_VERSION}/libs"])
 AC_SUBST(pkgvpythondir, ["\${pythondir}/${PACKAGE}-${API_VERSION}"])
 
+# XXX FIXME: Replace with proper checks
+AC_SUBST(EXTRA_CPPFLAGS, "-Wall -Werror")
+
 AC_CONFIG_FILES([
 	Makefile
 
