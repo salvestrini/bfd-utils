@@ -20,25 +20,131 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfd.h>
-#include <assert.h>
+#include <getopt.h>
+#include <math.h>
+#include <string.h>
 
-#include "elf-lib.h"
+#include "utils.h"
 #include "log.h"
+#include "debug.h"
+
+struct entry {
+        struct entry * next;
+        char *         name;
+        bfd_size_type  size;
+};
 
 struct callback_data {
-	unsigned int count;
+        struct entry * head;
 };
 
 void callback(bfd * abfd, asection * sect, void * obj)
 {
 	struct callback_data * data;
+        const char *           name;
 
-	assert(obj);
+	BUG_ON(abfd  == NULL);
+	BUG_ON(sect  == NULL);
+	BUG_ON(obj   == NULL);
+
 	data = (struct callback_data *) obj;
 
-	message("%d %s", sect->index, bfd_section_name(abfd, sect));
+        name = bfd_section_name(abfd, sect);
+        BUG_ON(name == NULL);
 
-	data->count++;
+        struct entry * tmp;
+
+        /* Find the section in our list */
+        for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
+                BUG_ON(tmp->name == NULL);
+                if (!strcmp(tmp->name, name)) {
+                        /* Got it */
+                        break;
+                }
+        }
+        if (tmp == NULL) {
+                /* Not found ... */
+                debug("Building new entry for section `%s'\n", name);
+                tmp = (struct entry *) xmalloc(sizeof(tmp));
+                tmp->name = xstrdup(name);
+                tmp->size = sect->size;
+                tmp->next = NULL;
+        }
+
+        /* Head add */
+        tmp->next  = data->head;
+        data->head = tmp;
+}
+
+void help(void)
+{
+        message("%s FILENAME\n", PROGRAM_NAME);
+}
+
+void version(void)
+{
+        message("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+        message("\n");
+        message("Copyright (C) 2008, 2009 Francesco Salvestrini");
+        message("This is free software.  You may redistribute copies of it under the terms of\n");
+        message("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n");
+        message("There is NO WARRANTY, to the extent permitted by law.\n");
+}
+
+#define max(A,B) ((A >= B) ? A : B)
+
+void dump(struct callback_data * data)
+{
+        struct entry * tmp;
+        size_t         max_name_length;
+        bfd_size_type  size_total;
+
+        debug("Dumping entries\n");
+
+        BUG_ON(data == NULL);
+
+        max_name_length = 0;
+        size_total      = 0;
+        for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
+                max_name_length = max(max_name_length, strlen(tmp->name));
+                size_total      = size_total + tmp->size;
+        }
+
+        BUG_ON(max_name_length == 0);
+        BUG_ON(size_total      <= 0);
+
+        for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
+                message("%-*s  %*d  [ %02.2f ]\n",
+                        max_name_length,
+                        tmp->name,
+                        ((int) log10(size_total)) + 1,
+                        tmp->size,
+                        (((float) tmp->size) / ((float) size_total)) * 100);
+        }
+}
+
+static struct callback_data data;
+
+void clear_entries(void)
+{
+        struct entry * tmp;
+
+        debug("Cleaning-up entries\n");
+        for (;;) {
+                tmp       = data.head;
+                data.head = data.head->next;
+
+                BUG_ON(tmp == NULL);
+                BUG_ON(tmp->name == NULL);
+
+                debug("Removing entry `%s'\n", tmp->name);
+                xfree(tmp->name);
+                xfree(tmp);
+
+                if (data.head == NULL) {
+                        break;
+                }
+        }
 }
 
 int main(int argc, char * argv[])
@@ -47,39 +153,45 @@ int main(int argc, char * argv[])
 	char *               filename_in;
 	struct callback_data data;
 
-        log_init(PROGRAM_NAME);
-	log_level(LOG_DEBUG);
+        log_init(PROGRAM_NAME, LOG_DEBUG);
+        atexit(log_fini);
 
 	if (argc != 2) {
-		fatal("Wrong parameters count");
+		hint(PROGRAM_NAME, "Wrong parameters count\n");
+                exit(EXIT_FAILURE);
 	}
 
 	filename_in = argv[1];
 	if (!filename_in) {
-		fatal("Missing input filename");
+		hint(PROGRAM_NAME, "Missing input filename\n");
+                exit(EXIT_FAILURE);
 	}
 
 	bfd_init();
 
-	debug("Reading input file %s", filename_in);
+	debug("Reading input file %s\n", filename_in);
 
 	bfd_in = bfd_openr(filename_in, NULL);
 	if (!bfd_in) {
-		fatal("Cannot open input file %s (%s)",
+		fatal("Cannot open input file %s (%s)\n",
 		      filename_in, BFD_strerror());
+                exit(EXIT_FAILURE);
 	}
 
 	if (!bfd_check_format(bfd_in, bfd_object)) {
-		fatal("Wrong input file format (not an object)");
+		fatal("Wrong input file format (not an object)\n");
+                exit(EXIT_FAILURE);
 	}
 
-	debug("Dumping sections");
+        data.head  = NULL;
+        atexit(clear_entries);
 
-	data.count = 0;
-	bfd_map_over_sections(bfd_in, callback, &data);
-	assert(data.count == bfd_count_sections(bfd_in));
+        debug("Iterating sections\n");
+        bfd_map_over_sections(bfd_in, callback, &data);
 
-	bfd_close(bfd_in);
+        dump(&data);
+	
+        bfd_close(bfd_in);
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }

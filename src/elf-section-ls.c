@@ -20,25 +20,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfd.h>
-#include <assert.h>
+#include <math.h>
 
-#include "elf-lib.h"
 #include "log.h"
+#include "debug.h"
+#include "utils.h"
 
 struct callback_data {
-	unsigned int count;
+        int please_fill_me;
 };
 
 void callback(bfd * abfd, asection * sect, void * obj)
 {
 	struct callback_data * data;
 
-	assert(obj);
+	BUG_ON(obj == NULL);
 	data = (struct callback_data *) obj;
 
-	message("%d %s", sect->index, bfd_section_name(abfd, sect));
+        BUG_ON(abfd->section_count <= 0);
 
-	data->count++;
+	message("%-*d %s\n",
+                ((int) log10(abfd->section_count)) + 1,
+                sect->index,
+                sect->name);
 }
 
 int main(int argc, char * argv[])
@@ -47,16 +51,18 @@ int main(int argc, char * argv[])
 	char *               filename_in;
 	struct callback_data data;
 
-        log_init(PROGRAM_NAME);
-	log_level(LOG_DEBUG);
+        log_init(PROGRAM_NAME, LOG_MESSAGE);
+        atexit(log_fini);
 
 	if (argc != 2) {
-		fatal("Wrong parameters count");
+		hint(PROGRAM_NAME, "Wrong parameters count");
+                exit(EXIT_FAILURE);
 	}
 
 	filename_in = argv[1];
 	if (!filename_in) {
-		fatal("Missing input filename");
+		hint(PROGRAM_NAME, "Missing input filename");
+                exit(EXIT_FAILURE);
 	}
 
 	bfd_init();
@@ -67,19 +73,19 @@ int main(int argc, char * argv[])
 	if (!bfd_in) {
 		fatal("Cannot open input file %s (%s)",
 		      filename_in, BFD_strerror());
+                exit(EXIT_FAILURE);
 	}
 
 	if (!bfd_check_format(bfd_in, bfd_object)) {
 		fatal("Wrong input file format (not an object)");
+                exit(EXIT_FAILURE);
 	}
 
 	debug("Dumping sections");
 
-	data.count = 0;
 	bfd_map_over_sections(bfd_in, callback, &data);
-	assert(data.count == bfd_count_sections(bfd_in));
 
 	bfd_close(bfd_in);
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
