@@ -17,23 +17,24 @@
  *
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef ELF_UTILS_DEBUG_H
+#define ELF_UTILS_DEBUG_H
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "log.h"
 
-#define BUG() {							\
-        fatal("Bug hit in '%s' (%s:%d)\n",                      \
-	       __PRETTY_FUNCTION__, __FILE__, __LINE__);	\
-	abort();                                                \
+#define BUG() {                                                 \
+        fprintf(stderr, "Bug hit in '%s' (%s:%d)\n",            \
+                __PRETTY_FUNCTION__, __FILE__, __LINE__);       \
+        abort();                                                \
 }
 
 #define BUG_ON(X) {                             \
-	if (X) {                                \
-        	BUG();                          \
-	}                                       \
+        if (X) {                                \
+                BUG();                          \
+        }                                       \
 }
 
-#endif /* DEBUG_H */
+#endif /* ELF_UTILS_DEBUG_H */
