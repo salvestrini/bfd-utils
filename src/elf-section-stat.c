@@ -68,6 +68,7 @@ void callback(bfd * abfd, asection * sect, void * obj)
         if (tmp == NULL) {
                 /* Not found ... */
                 debug("Building new entry for section `%s'\n", name);
+
                 tmp = (struct entry *) xmalloc(sizeof(tmp));
                 tmp->name = xstrdup(name);
                 tmp->size = sect->size;
@@ -122,12 +123,12 @@ void dump(struct callback_data * data)
         debug("Dumping entries\n");
 
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-                message("  %-*s  %*d  [ %5.2f ]\n",
+                message("%-*s  %*d  [ %5.2f ]\n",
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
                         tmp->size,
-                        tmp->size / size_total * 100);
+                        (tmp->size / size_total) * 100);
         }
 }
 
@@ -138,7 +139,7 @@ void clear_entries(void)
         struct entry * tmp;
 
         debug("Cleaning-up entries\n");
-        for (;;) {
+        for (; data.head != NULL;) {
                 tmp       = data.head;
                 data.head = data.head->next;
 
@@ -148,10 +149,6 @@ void clear_entries(void)
                 debug("Removing entry `%s'\n", tmp->name);
                 xfree(tmp->name);
                 xfree(tmp);
-
-                if (data.head == NULL) {
-                        break;
-                }
         }
 }
 
