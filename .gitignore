@@ -26,7 +26,7 @@ config.status
 src/elf-section-ls
 src/elf-section-mv
 src/elf-section-stat
-src/elf-symbol-find
+src/elf-section-remangle
 
 src/gnulib/sys/stat.h
 src/gnulib/alloca.h
