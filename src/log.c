@@ -17,30 +17,66 @@
  *
  */
 
-#include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
 #include "debug.h"
+#include "log.h"
+#include "utils.h"
 
-int    debugging = 0;
-char * banner;
+static char *      banner_ = NULL;
+static log_level_t level_  = LOG_MESSAGE;
 
-void log_init(char * b)
+void log_init(const char * banner,
+              log_level_t  level)
 {
-        BUG_ON(b == NULL);
-
-        banner = strdup(b);
-
         BUG_ON(banner == NULL);
+
+        banner_ = xstrdup(banner);
+        level_  = level;
+
+        BUG_ON(banner_ == NULL);
 }
 
 void log_level(log_level_t level)
 {
+        level_ = level;
+}
+
+int log_write(log_level_t  level,
+              const char * format,
+              ...)
+{
+        BUG_ON(banner_ == NULL);
+
+        va_list arguments;
+        int     i;
+
+        va_start(arguments, format);
+        i = 0;
+        if (level >= level_) {
+                FILE * stream = stdout;
+                if (level_ >= LOG_WARNING) {
+                        /* Log to stderr if level is ge warning */
+                        stream = stderr;
+                }
+                if (level_ >= LOG_WARNING) {
+                        /* Print the banner if level is ge warning */
+                        fprintf(stream, "%s: ", banner_);
+                }
+                i = vfprintf(stream, format, arguments);
+                fflush(stream);
+        }
+        va_end(arguments);
+
+        return i;
 }
 
 void log_fini(void)
 {
-        BUG_ON(banner == NULL);
+        BUG_ON(banner_ == NULL);
 
-        free(banner);
+        free(banner_);
 }

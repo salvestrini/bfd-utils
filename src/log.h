@@ -20,42 +20,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifndef LOG_H
-#define LOG_H
-
-extern int    debugging;
-extern char * banner;
-
-#define fatal(FMT,ARGS...) {                                    \
-                fprintf(stderr,"%s:" FMT "\n", banner, ##ARGS);	\
-}
-
-#define error(FMT,ARGS...) {                                            \
-                fprintf(stderr, "%s:" FMT "\n", banner, ##ARGS);	\
-}
-
-#define warning(FMT,ARGS...) {                                  \
-                fprintf(stdout, "%s" FMT "\n", banner, ##ARGS);	\
-}
-
-#define message(FMT,ARGS...) {			\
-	fprintf(stdout,FMT "\n",##ARGS);	\
-}
-
-#define debug(FMT,ARGS...) {                                    \
-	if (debugging) {                                        \
-		fprintf(stdout,"%s" FMT "\n",banner, ##ARGS);	\
-	}                                                       \
-}
-
-void    log_init(char * banner);
+#ifndef ELF_UTILS_LOG_H
+#define ELF_UTILS_LOG_H
 
 typedef enum {
+        LOG_DEBUG,
         LOG_MESSAGE,
         LOG_VERBOSE,
-        LOG_DEBUG
+        LOG_WARNING,
+        LOG_ERROR,
+        LOG_FATAL
 } log_level_t;
 
-void    log_level(log_level_t level);
+void log_init(const char * banner,
+              log_level_t  level);
+void log_level(log_level_t level);
+int  log_write(log_level_t level, const char * fmt, ...);
+void log_fini(void);
 
-#endif /* LOG_H */
+#define fatal(FMT,ARGS...)   log_write(LOG_FATAL,   FMT, ##ARGS)
+#define error(FMT,ARGS...)   log_write(LOG_ERROR,   FMT, ##ARGS)
+#define warning(FMT,ARGS...) log_write(LOG_WARNING, FMT, ##ARGS)
+#define verbose(FMT,ARGS...) log_write(LOG_VERBOSE, FMT, ##ARGS)
+#define message(FMT,ARGS...) log_write(LOG_MESSAGE, FMT, ##ARGS)
+#define debug(FMT,ARGS...)   log_write(LOG_DEBUG,   FMT, ##ARGS)
+
+#endif /* ELF_UTILS_LOG_H */
