@@ -25,6 +25,7 @@
 #include "log.h"
 #include "utils.h"
 
+#if 0
 struct callback_data {
 	bfd * abfd;
 };
@@ -36,9 +37,10 @@ void callback(bfd * bfd_in, asection * sect, void * obj)
 	BUG_ON(obj == NULL);
 	bfd_out = ((struct callback_data *) obj)->abfd;
 
-	debug("  Copying section %d %s",
+	debug("  Copying section %d %s\n",
 	      sect->index, bfd_section_name(abfd, sect));
 }
+#endif
 
 int main(int argc, char * argv[])
 {
@@ -46,16 +48,14 @@ int main(int argc, char * argv[])
 	bfd *                bfd_out;
 	char *               filename_in;
 	char *               filename_out;
-	int                  index_from;
-	int                  index_to;
-	asection *           section_from;
-	asection *           section_to;
+#if 0
 	struct callback_data data;
+#endif
 
-        log_init(PROGRAM_NAME, LOG_MESSAGE);
+        log_init(PROGRAM_NAME, LOG_DEBUG);
         atexit(log_fini);
 
-	if (argc != 5) {
+	if (argc != 3) {
 		hint(PROGRAM_NAME, "Wrong parameters count\n");
                 exit(EXIT_FAILURE);
 	}
@@ -70,26 +70,13 @@ int main(int argc, char * argv[])
 		fatal("Missing output filename\n");
                 exit(EXIT_FAILURE);
 	}
-	index_from = atoi(argv[3]);
-	if (index_from < 0) {
-		fatal("Wrong index from\n");
-                exit(EXIT_FAILURE);
-	}
-	index_to = atoi(argv[4]);
-	if (index_to < 0) {
-		fatal("Wrong index to\n");
-                exit(EXIT_FAILURE);
-	}
-	if (index_from == index_to) {
-		warning("Index from and index to are equal\n");
-	}
 
 	bfd_init();
 
-	debug("Reading input file %s", filename_in);
+	debug("Reading input file %s\n", filename_in);
 	bfd_in = bfd_openr(filename_in, NULL);
 	if (!bfd_in) {
-		fatal("Cannot open input file %s (%s)",
+		fatal("Cannot open input file %s (%s)\n",
 		      filename_in, BFD_strerror());
                 exit(EXIT_FAILURE);
 	}
@@ -98,40 +85,26 @@ int main(int argc, char * argv[])
                 exit(EXIT_FAILURE);
 	}
 
-	section_from = BFD_find(bfd_in, index_from);
-	if (!section_from) {
-		fatal("Cannot find section number %d", index_from);
-                exit(EXIT_FAILURE);
-	}
-	debug("Section %d is %s",
-	      index_from, bfd_section_name(bfd_in, section_from));
-
-	section_to = BFD_find(bfd_in, index_to);
-	if (!section_to) {
-		fatal("Cannot find section number %d", index_to);
-                exit(EXIT_FAILURE);
-	}
-	debug("Section %d is %s",
-	      index_to, bfd_section_name(bfd_in, section_to));
-
 	bfd_out = bfd_openw(filename_out, NULL);
 	if (!bfd_out) {
-		fatal("Cannot open output file %s (%s)",
+		fatal("Cannot open output file %s (%s)\n",
 		      filename_out, BFD_strerror());
                 exit(EXIT_FAILURE);
 	}
 
-	debug("Generating output file %s", filename_out);
+	debug("Generating output file %s\n", filename_out);
 	bfd_set_format(bfd_out, bfd_get_format(bfd_in));
 
-	if (bfd_copy_private_header_data(bfd_in, bfd_out) == FALSE) {
-		fatal("Cannot copy private header data (%s)",
+	if (bfd_copy_private_bfd_data(bfd_in, bfd_out) == FALSE) {
+		fatal("Cannot copy private bfd data (%s)\n",
 		      BFD_strerror());
                 exit(EXIT_FAILURE);
         }
-
-	data.abfd = bfd_out;
-	bfd_map_over_sections(bfd_in, callback, &data);
+	if (bfd_copy_private_header_data(bfd_in, bfd_out) == FALSE) {
+		fatal("Cannot copy private header data (%s)\n",
+		      BFD_strerror());
+                exit(EXIT_FAILURE);
+        }
 
 	bfd_close(bfd_in);
 	bfd_close(bfd_out);

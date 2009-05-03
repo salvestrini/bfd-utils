@@ -34,32 +34,32 @@ void BFD_dump(bfd * abfd)
 {
 	BUG_ON(abfd == NULL);
 
-	debug("Infos:");
-	debug("  Generic:");
-	debug("    Name:     %s", bfd_get_filename(abfd));
-	debug("    Size:     %d", (size_t) bfd_get_size(abfd));
-	debug("    Format:   %d", bfd_get_format(abfd));
+	debug("Infos:\n");
+	debug("  Generic:\n");
+	debug("    Name:     %s\n", bfd_get_filename(abfd));
+	debug("    Size:     %d\n", (size_t) bfd_get_size(abfd));
+	debug("    Format:   %d\n", bfd_get_format(abfd));
 
 	if (bfd_get_format(abfd) == bfd_unknown) {
 		return;
 	}
 
-	debug("  Specific:");
-	debug("    Symcount: %d", bfd_get_symcount(abfd));
-	debug("    Sections: %d", bfd_count_sections(abfd));
+	debug("  Specific:\n");
+	debug("    Symcount: %d\n", bfd_get_symcount(abfd));
+	debug("    Sections: %d\n", bfd_count_sections(abfd));
 	if (bfd_count_sections(abfd)) {
 		struct bfd_section * tmp;
 		int                  count;
 
-		debug("  Sections:");
+		debug("  Sections:\n");
 
 		count = 0;
 		for (tmp = abfd->sections; tmp != NULL; tmp = tmp->next) {
-			debug("    Id:     %d",
+			debug("    Id:     %d\n",
 			      tmp->id);
-			debug("      Name:   %s",
+			debug("      Name:   %s\n",
 			      bfd_section_name(bfd, tmp));
-			debug("      Size:   %d",
+			debug("      Size:   %d\n",
 			      (size_t) bfd_section_size(bfd, tmp));
 			count++;
 		}
@@ -98,7 +98,7 @@ void hint(const char * program_name,
         BUG_ON(program_name == NULL);
 
         message("%s: %s\n", program_name, message);
-        message("Try `%s --help' for more information.", program_name);
+        message("Try `%s --help' for more information.\n", program_name);
 }
 
 void * xmalloc(size_t size)
