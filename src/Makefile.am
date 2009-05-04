@@ -22,52 +22,55 @@ include $(top_srcdir)/Makefile.sub
 
 AUTOMAKE_OPTIONS = subdir-objects
 
+SUBDIRS = gnulib
+
 EXTRA_DIST =
 
 ## Programs
 
 bin_PROGRAMS =					\
-	elf-section-stat			\
-	elf-section-ls				\
-	elf-section-mv				\
-	elf-section-remangle
+	bfd-section-stat			\
+	bfd-section-ls				\
+	bfd-section-mv				\
+	bfd-section-remangle
 
 common_LDADD =					\
 	libcommon.a				\
+	gnulib/libgnu.a				\
 	-lbfd
 
-elf_section_stat_SOURCES =			\
-	elf-section-stat.c
-elf_section_stat_CPPFLAGS =			\
-	-D 'PROGRAM_NAME="elf-section-stat"'	\
+bfd_section_stat_SOURCES =			\
+	bfd-section-stat.c
+bfd_section_stat_CPPFLAGS =			\
+	-D 'PROGRAM_NAME="bfd-section-stat"'	\
 	$(EXTRA_CPPFLAGS)
-elf_section_stat_LDADD =			\
+bfd_section_stat_LDADD =			\
 	$(common_LDADD)				\
 	-lm
 
-elf_section_ls_SOURCES =			\
-	elf-section-ls.c
-elf_section_ls_CPPFLAGS =			\
-	-D 'PROGRAM_NAME="elf-section-ls"'	\
+bfd_section_ls_SOURCES =			\
+	bfd-section-ls.c
+bfd_section_ls_CPPFLAGS =			\
+	-D 'PROGRAM_NAME="bfd-section-ls"'	\
 	$(EXTRA_CPPFLAGS)
-elf_section_ls_LDADD =				\
+bfd_section_ls_LDADD =				\
 	$(common_LDADD)				\
 	-lm
 
-elf_section_mv_SOURCES =			\
-	elf-section-mv.c
-elf_section_mv_CPPFLAGS =			\
-	-D 'PROGRAM_NAME="elf-section-mv"'	\
+bfd_section_mv_SOURCES =			\
+	bfd-section-mv.c
+bfd_section_mv_CPPFLAGS =			\
+	-D 'PROGRAM_NAME="bfd-section-mv"'	\
 	$(EXTRA_CPPFLAGS)
-elf_section_mv_LDADD =				\
+bfd_section_mv_LDADD =				\
 	$(common_LDADD)
 
-elf_section_remangle_SOURCES =			\
-	elf-section-remangle.c
-elf_section_remangle_CPPFLAGS =				\
-	-D 'PROGRAM_NAME="elf-section-remangle"'	\
+bfd_section_remangle_SOURCES =			\
+	bfd-section-remangle.c
+bfd_section_remangle_CPPFLAGS =				\
+	-D 'PROGRAM_NAME="bfd-section-remangle"'	\
 	$(EXTRA_CPPFLAGS)
-elf_section_remangle_LDADD =			\
+bfd_section_remangle_LDADD =			\
 	$(common_LDADD)
 
 
@@ -90,10 +93,10 @@ libcommon_a_CPPFLAGS =				\
 update-local: Makefile
 
 all_SRCS =					\
-	$(elf_stat_SOURCES)			\
-	$(elf_symbol_find_SOURCES)		\
-	$(elf_section_ls_SOURCES)		\
-	$(elf_section_mv_SOURCES)
+	$(bfd_section_stat_SOURCES)		\
+	$(bfd_section_remangle_SOURCES)		\
+	$(bfd_section_ls_SOURCES)		\
+	$(bfd_section_mv_SOURCES)
 
 maintainer-check-local: Makefile
 	$(WHITESPACE_DETECT)  $(all_SRCS)

@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfd.h>
+#include <getopt.h>
+#include <string.h>
 
 #include "debug.h"
 #include "log.h"
@@ -40,6 +42,20 @@ void callback(bfd * bfd_in, asection * sect, void * obj)
 	      sect->index, bfd_section_name(abfd, sect));
 }
 
+void help(void)
+{
+        message("%s [OPTION]...\n", PROGRAM_NAME);
+        message("\n");
+        message("Options:\n");
+
+        message("  -d, --debug      enable debugging traces\n");
+        message("  -v, --verbose    verbosely report processing\n");
+        message("  -V, --version    print this help, then exit\n");
+        message("  -h, --help       print version number, then exit\n");
+        message("\n");
+        message("Report bugs to <%s>\n", PACKAGE_BUGREPORT);
+}
+
 int main(int argc, char * argv[])
 {
 	bfd *                bfd_in;
@@ -55,21 +71,75 @@ int main(int argc, char * argv[])
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
 
-	if (argc != 5) {
-		hint(PROGRAM_NAME, "Wrong parameters count\n");
-                exit(EXIT_FAILURE);
-	}
+        filename_in  = NULL;
+        filename_out = NULL;
 
-	filename_in = argv[1];
+        int c;
+        // int digit_optind = 0;
+        while (1) {
+                // int this_option_optind = optind ? optind : 1;
+                int option_index       = 0;
+
+                static struct option long_options[] = {
+                        { "input",        1, 0, 'i' },
+                        { "output",       1, 0, 'o' },
+
+                        { "debug",        0, 0, 'd' },
+                        { "verbose",      0, 0, 'v' },
+                        { "version",      0, 0, 'V' },
+                        { "help",         0, 0, 'h' },
+                        { 0,              0, 0, 0   }
+                };
+                c = getopt_long(argc, argv, "dvVh",
+                                long_options, &option_index);
+                if (c == -1) {
+                        break;
+                }
+
+                debug("Handling option character '%c'\n", c);
+
+                switch (c) {
+                        case 'i':
+                                filename_in = optarg;
+                                break;
+                        case 'o':
+                                filename_out = optarg;
+                                break;
+                        case 'd':
+                                log_level(LOG_DEBUG);
+                                break;
+                        case 'v':
+                                log_level(LOG_VERBOSE);
+                                break;
+                        case 'V':
+                                version(PROGRAM_NAME);
+                                return 0;
+                        case 'h':
+                                help();
+                                return 0;
+                        case '?':
+                                hint(PROGRAM_NAME, "Unrecognized option");
+                                return 1;
+                        default:
+                                BUG();
+                                return 1;
+                }
+        }
+
 	if (!filename_in) {
 		fatal("Missing input filename\n");
                 exit(EXIT_FAILURE);
 	}
-	filename_out = argv[2];
 	if (!filename_out) {
 		fatal("Missing output filename\n");
                 exit(EXIT_FAILURE);
 	}
+        /* XXX FIXME: Use stat instead of strcmp */
+        if (!strcmp(filename_in, filename_out)) {
+		fatal("Input and output are the same file\n");
+                exit(EXIT_FAILURE);
+        }
+
 	index_from = atoi(argv[3]);
 	if (index_from < 0) {
 		fatal("Wrong index from\n");

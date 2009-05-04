@@ -82,17 +82,16 @@ void callback(bfd * abfd, asection * sect, void * obj)
 
 void help(void)
 {
-        message("%s FILENAME\n", PROGRAM_NAME);
-}
-
-void version(void)
-{
-        message("%s (%s) %s\n", PROGRAM_NAME, PACKAGE_NAME, PACKAGE_VERSION);
+        message("%s [OPTION]...\n", PROGRAM_NAME);
         message("\n");
-        message("Copyright (C) 2008, 2009 Francesco Salvestrini");
-        message("This is free software.  You may redistribute copies of it under the terms of\n");
-        message("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n");
-        message("There is NO WARRANTY, to the extent permitted by law.\n");
+        message("Options:\n");
+
+        message("  -d, --debug      enable debugging traces\n");
+        message("  -v, --verbose    verbosely report processing\n");
+        message("  -V, --version    print this help, then exit\n");
+        message("  -h, --help       print version number, then exit\n");
+        message("\n");
+        message("Report bugs to <%s>\n", PACKAGE_BUGREPORT);
 }
 
 #define max(A,B) ((A >= B) ? A : B)
@@ -158,17 +157,61 @@ int main(int argc, char * argv[])
 	char *               filename_in;
 	struct callback_data data;
 
-        log_init(PROGRAM_NAME, LOG_DEBUG);
+        log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
 
-	if (argc != 2) {
-		hint(PROGRAM_NAME, "Wrong parameters count\n");
-                exit(EXIT_FAILURE);
-	}
+        filename_in = NULL;
 
-	filename_in = argv[1];
+        int c;
+        // int digit_optind = 0;
+        while (1) {
+                // int this_option_optind = optind ? optind : 1;
+                int option_index       = 0;
+
+                static struct option long_options[] = {
+                        { "input",        0, 0, 'i' },
+
+                        { "debug",        0, 0, 'd' },
+                        { "verbose",      0, 0, 'v' },
+                        { "version",      0, 0, 'V' },
+                        { "help",         0, 0, 'h' },
+                        { 0,              0, 0, 0   }
+                };
+                c = getopt_long(argc, argv, "i:dvVh",
+                                long_options, &option_index);
+                if (c == -1) {
+                        break;
+                }
+
+                debug("Handling option character '%c'\n", c);
+
+                switch (c) {
+                        case 'i':
+                                filename_in = optarg;
+                                break;
+                        case 'd':
+                                log_level(LOG_DEBUG);
+                                break;
+                        case 'v':
+                                log_level(LOG_VERBOSE);
+                                break;
+                        case 'V':
+                                version(PROGRAM_NAME);
+                                return 0;
+                        case 'h':
+                                help();
+                                return 0;
+                        case '?':
+                                hint(PROGRAM_NAME, "Unrecognized option");
+                                return 1;
+                        default:
+                                BUG();
+                                return 1;
+                }
+        }
+
 	if (!filename_in) {
-		hint(PROGRAM_NAME, "Missing input filename\n");
+		hint(PROGRAM_NAME, "Missing input filename");
                 exit(EXIT_FAILURE);
 	}
 
