@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 #
-# configure.ac for elf-utils
+# configure.ac for bfd-utils
 #
 # Copyright (C) 2008, 2009 Francesco Salvestrini
 #
@@ -20,7 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-AC_INIT([ELF_UTILS],[@VERSION@],[salvestrini@gmail.com],[elf-utils])
+AC_INIT([BFD_UTILS],[@VERSION@],[salvestrini@gmail.com],[bfd-utils])
 
 # Check for a recent version of autoconf
 AC_PREREQ([2.61])
@@ -28,7 +28,7 @@ AC_PREREQ([2.61])
 # Place/find all autotools related files in the following directories
 AC_CONFIG_AUX_DIR([tools/autotools])
 AC_CONFIG_MACRO_DIR([tools/autotools/m4])
-AC_CONFIG_SRCDIR([src/elf-section-stat.c])
+AC_CONFIG_SRCDIR([src/bfd-section-stat.c])
 
 #
 # For automake options (AM_INIT_AUTOMAKE options) see Makefile.am
@@ -50,6 +50,12 @@ AC_PROG_CPP
 AC_PROG_CC
 AC_PROG_CC_C_O
 AC_PROG_RANLIB
+
+#
+# gnulib related
+#
+GNULIB_EARLY
+GNULIB_INIT
 
 AX_PATH_MISSING([HELP2MAN],    [help2man])
 AX_PATH_MISSING([SITETOOL],    [sitetool])
@@ -92,8 +98,11 @@ AC_CONFIG_FILES([
 	Makefile
 
 	src/Makefile
+        src/gnulib/Makefile
 
 	man/Makefile
+
+	tests/Makefile
 
 	site/Makefile
 	site/in/Makefile
