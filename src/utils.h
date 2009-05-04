@@ -29,8 +29,9 @@ void         BFD_dump(bfd * abfd);
 const char * BFD_strerror(void);
 asection *   BFD_find(bfd * abfd, int index);
 
-void hint(const char * program_name,
-          const char * message);
+void   version(const char * program_name);
+void   hint(const char * program_name,
+            const char * message);
 
 void * xmalloc(size_t size);
 void   xfree(void * p);

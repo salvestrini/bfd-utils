@@ -92,6 +92,18 @@ asection * BFD_find(bfd * abfd, int index)
 	return bfd_sections_find_if(abfd, callback_find, &index);
 }
 
+void version(const char * program_name)
+{
+        BUG_ON(program_name == NULL);
+
+        message("%s (%s) %s\n", program_name, PACKAGE_NAME, PACKAGE_VERSION);
+        message("\n");
+        message("Copyright (C) 2008, 2009 Francesco Salvestrini");
+        message("This is free software.  You may redistribute copies of it under the terms of\n");
+        message("the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n");
+        message("There is NO WARRANTY, to the extent permitted by law.\n");
+}
+
 void hint(const char * program_name,
           const char * message)
 {

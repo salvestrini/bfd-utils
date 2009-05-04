@@ -25,8 +25,8 @@
 
 typedef enum {
         LOG_DEBUG,
-        LOG_MESSAGE,
         LOG_VERBOSE,
+        LOG_MESSAGE,
         LOG_WARNING,
         LOG_ERROR,
         LOG_FATAL
