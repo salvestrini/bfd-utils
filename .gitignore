@@ -23,10 +23,10 @@ configure.ac
 config.log
 config.status
 
-src/elf-section-ls
-src/elf-section-mv
-src/elf-section-stat
-src/elf-section-remangle
+src/bfd-section-ls
+src/bfd-section-mv
+src/bfd-section-stat
+src/bfd-section-remangle
 
 src/gnulib/sys/stat.h
 src/gnulib/alloca.h
@@ -52,6 +52,11 @@ tools/autotools/compile
 tools/autotools/depcomp
 tools/autotools/config.guess
 tools/autotools/config.sub
+
+tests/defs
+tests/testSubDir-*
+tests/test-fail
+tests/test-success
 
 #docs/man/fcp.1
 
