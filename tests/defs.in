@@ -1,0 +1,173 @@
+#
+# This file is based upon defs.in from automake package
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+# Be Bourne compatible.
+# (Snippet copied from configure's initialization in Autoconf 2.57.)
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
+  emulate sh
+  NULLCMD=:
+  # Zsh 3.x and 4.x performs word splitting on ${1+"$@"}, which
+  # is contrary to our usage.  Disable this feature.
+  alias -g '${1+"$@"}'='"$@"'
+elif test -n "${BASH_VERSION+set}" && (set -o posix) >/dev/null 2>&1; then
+  set -o posix
+fi
+
+# Ensure we are running from the right directory.
+test -f ./defs || {
+   echo "defs: not found in current directory" 1>&2
+   exit 1
+}
+
+# If srcdir is not set, then we are not running from `make check', be verbose.
+if test -z "$srcdir"; then
+   test -z "$VERBOSE" && VERBOSE=x
+   # compute $srcdir.
+   srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`
+   test $srcdir = $0 && srcdir=.
+fi
+
+# Ensure $srcdir is set correctly.
+test -f $srcdir/defs.in || {
+   echo "$srcdir/defs.in not found, check \$srcdir" 1>&2
+   exit 1
+}
+
+me=`echo "$0" | sed -e 's,.*[\\/],,;s/\.test$//'`
+
+# See how redirections should work.  User can set VERBOSE to see all
+# output.
+test -z "$VERBOSE" && {
+   exec > /dev/null 2>&1
+}
+
+# The following definitions are needed in some tests ...
+PACKAGE="@PACKAGE@"
+API_VERSION="@API_VERSION@"
+
+# Make sure we override the user shell.
+SHELL='@SHELL@'
+export SHELL
+
+# User can override various tools used.
+test -z "$PERL" && PERL='@PERL@'
+test -z "$MAKE" && MAKE=make
+
+FLAGS=""
+
+test -n "$VERBOSE"     && FLAGS="$FLAGS --verbose"
+test -n "$DEBUG"       && FLAGS="$FLAGS --debug"
+
+test -z "$BFD_SECTION_LS"               && FCP="@abs_top_builddir@/src/bfd-section-ls $FLAGS"
+test -z "$BFD_SECTION_LS_NOFLAGS"       && FCP_NOFLAGS="@abs_top_builddir@/src/bfd-section-ls"
+test -z "$BFD_SECTION_MV"               && FCP="@abs_top_builddir@/src/bfd-section-mv $FLAGS"
+test -z "$BFD_SECTION_MV_NOFLAGS"       && FCP_NOFLAGS="@abs_top_builddir@/src/bfd-section-mv"
+test -z "$BFD_SECTION_REMANGLE"         && FCP="@abs_top_builddir@/src/bfd-section-remangle $FLAGS"
+test -z "$BFD_SECTION_REMANGLE_NOFLAGS" && FCP_NOFLAGS="@abs_top_builddir@/src/bfd-section-remangle"
+test -z "$BFD_SECTION_STAT"             && FCP="@abs_top_builddir@/src/bfd-section-stat $FLAGS"
+test -z "$BFD_SECTION_STAT_NOFLAGS"     && FCP_NOFLAGS="@abs_top_builddir@/src/bfd-section-stat"
+
+PATH=`pwd`:$PATH
+echo $PATH
+
+if test -n "$required"
+then
+  for tool in $required
+  do
+    echo "$me: checking $tool..."
+    # Check that each required tool is present.
+    case $tool in
+#      tidy)
+#        # HTMLtidy test
+#        test -n "@TIDY@" || exit 77
+#	;;
+
+      # Generic case: the tool must support --version.
+      *)
+	echo "$me: running $tool --version"
+	( $tool --version ) || exit 77
+	;;
+    esac
+    # Additional variables to define if some $tool is required.
+    case $tool in
+      gcc)
+	;;
+    esac
+  done
+fi
+
+# Always use an absolute srcdir.  Otherwise symlinks made in subdirs
+# of the test dir just won't work.
+case "$srcdir" in
+ [\\/]* | ?:[\\/]*)
+    ;;
+
+ *)
+    srcdir=`CDPATH=: && cd "$srcdir" && pwd`
+    ;;
+esac
+
+# Define and export useful test variables
+
+testname=`basename $0 .test`
+chmod -R a+rwx testSubDir-$testname > /dev/null 2>&1
+rm -rf testSubDir-$testname > /dev/null 2>&1
+mkdir testSubDir-$testname
+
+echo "=== Running test $0"
+
+# Copy in some files we need.
+if test -n "$datadir"
+then
+  echo "$me: copying test data directory..."
+  if test ! -d $srcdir/$datadir ; then
+    echo "$me: datadir $datadir not found" 1>&2
+    exit 1
+  fi
+  cp -R $srcdir/$datadir/* ./testSubDir-$testname
+fi
+chmod -R a+rw ./testSubDir-$testname
+
+# Then jump into the created directory
+cd ./testSubDir-$testname
+
+# POSIX no longer requires 'egrep' and 'fgrep',
+# but some hosts lack 'grep -E' and 'grep -F'.
+EGREP='@EGREP@'
+FGREP='@FGREP@'
+
+# The amount we should wait after modifying files depends on the platform.
+# For instance, Windows '95, '98 and ME have 2-second granularity
+# and can be up to 3 seconds in the future w.r.t. the system clock.
+sleep='sleep @MODIFICATION_DELAY@'
+
+# The tests call `make -e' but we do not want $srcdir from the environment
+# to override the definition from the Makefile.
+testsrcdir=$srcdir
+unset srcdir
+
+# Turn on shell traces when VERBOSE=x.
+if test "x$VERBOSE" = xx; then
+  set -x
+else
+  :
+fi
+
+pwd
