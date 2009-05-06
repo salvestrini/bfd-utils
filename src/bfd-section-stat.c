@@ -77,6 +77,8 @@ void callback(bfd * abfd, asection * sect, void * obj)
                 /* Add it */
                 tmp->next  = data->head;
                 data->head = tmp;
+        } else {
+                error("Duplicated `%s' section found\n", name);
         }
 }
 
