@@ -116,6 +116,17 @@ NEWS: $(DNT_DB)
 	echo "* $$d_tail -> $$d_head" >> NEWS
 MAINTAINERCLEANFILES += NEWS
 
+AUTHORS:
+	rm -f AUTHORS                       &&                                  \
+	touch AUTHORS                       &&                                  \
+	cat $(srcdir)/AUTHORS.in >> AUTHORS &&                                  \
+	$(GITLOG_TO_COMMITTERS) | $(SED) -e 's,\(.*\),  \1,' >> AUTHORS &&      \
+	echo "" >> AUTHORS                  || {                                \
+	        rm -f AUTHORS ;                                                 \
+	        exit 1 ;                                                        \
+	}
+MAINTAINERCLEANFILES += AUTHORS
+
 ChangeLog:
 	$(GITLOG_TO_CHANGELOG) > ChangeLog || {	\
 		rm -f ChangeLog ;		\
