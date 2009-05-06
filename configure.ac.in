@@ -52,6 +52,16 @@ AC_PROG_CC_C_O
 AC_PROG_RANLIB
 
 #
+# Required libraries
+#
+AC_CHECK_LIB(bfd,bfd_map_over_sections,[],[
+        AC_MSG_ERROR([Your system lacks of libbfd support])
+])
+AC_CHECK_LIB(m,log10,[],[
+        AC_MSG_ERROR([Your system lacks of libm support])
+])
+
+#
 # gnulib related
 #
 GNULIB_EARLY
