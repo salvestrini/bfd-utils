@@ -72,7 +72,7 @@ AX_PATH_MISSING([SITETOOL],    [sitetool])
 AX_PATH_MISSING([WGET],        [wget])
 AX_PATH_MISSING([PERL],        [perl])
 
-AC_PATH_PROG([DEVTODO],        [devtodo])
+AC_PATH_PROG([DNT],            [dnt])
 AC_PATH_PROG([DEVTODO_TO_DNT], [devtodo])
 
 #

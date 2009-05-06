@@ -42,7 +42,7 @@ EXTRA_DIST  = $(SITE_SRCS)
 CLEAN_FILES =
 
 news.dump: $(top_srcdir)/.dnt.db
-	$(top_builddir)/src/dnt --database=$(top_srcdir)/.dnt.db \
+	$(DNT) --database=$(top_srcdir)/.dnt.db \
 	       --mono \
 	       show \
 	       --indent-fill="(ul " \
@@ -67,7 +67,7 @@ news.sxml: news.dump
 CLEAN_FILES += news.sxml
 
 todos.dump: $(top_srcdir)/.dnt.db
-	$(top_builddir)/src/dnt --database=$(top_srcdir)/.dnt.db \
+	$(DNT) --database=$(top_srcdir)/.dnt.db \
 	       --mono \
 	       show \
 	       --indent-fill="(ul " \
