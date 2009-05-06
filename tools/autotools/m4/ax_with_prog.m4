@@ -1,5 +1,5 @@
 # ===========================================================================
-#              http://autoconf-archive.cryp.to/ax_with_prog.html
+#          http://www.nongnu.org/autoconf-archive/ax_with_prog.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -22,11 +22,7 @@
 #   NOTE: This macro is based upon the original AX_WITH_PYTHON macro from
 #   Dustin J. Mitchell <dustin@cs.uchicago.edu>.
 #
-# LAST MODIFICATION
-#
-#   2008-05-05
-#
-# COPYLEFT
+# LICENSE
 #
 #   Copyright (c) 2008 Francesco Salvestrini <salvestrini@users.sourceforge.net>
 #   Copyright (c) 2008 Dustin J. Mitchell <dustin@cs.uchicago.edu>

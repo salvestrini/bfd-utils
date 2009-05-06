@@ -1,5 +1,5 @@
 # ===========================================================================
-#            http://autoconf-archive.cryp.to/ax_split_version.html
+#        http://www.nongnu.org/autoconf-archive/ax_split_version.html
 # ===========================================================================
 #
 # SYNOPSIS
@@ -13,11 +13,7 @@
 #
 #   Sets the variables.
 #
-# LAST MODIFICATION
-#
-#   2008-04-12
-#
-# COPYLEFT
+# LICENSE
 #
 #   Copyright (c) 2008 Tom Howard <tomhoward@users.sf.net>
 #
