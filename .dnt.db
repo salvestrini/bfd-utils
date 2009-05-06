@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<root><entry priority="veryhigh" start="1241018717">
+        Release 0.1.0
+    </entry>
+    <entry priority="high" start="1241018720">
+        Release 0.2.0
+    </entry>
+    <entry priority="medium" start="1241018725">
+        Release 0.3.0
+    </entry>
+    </root>
