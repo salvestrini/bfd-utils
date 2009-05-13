@@ -48,14 +48,16 @@ void callback(bfd * abfd, asection * sect, void * obj)
 	BUG_ON(sect  == NULL);
 	BUG_ON(obj   == NULL);
 
+        /* Retrieve our data */
 	data = (struct callback_data *) obj;
 
+        /* Find section name */
         name = bfd_section_name(abfd, sect);
         BUG_ON(name == NULL);
 
         debug("Callback called for `%s'\n", name);
 
-        /* Find the section in our list */
+        /* Find the section in our list (if already present ...) */
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
                 debug("Comparing `%s'\n", tmp->name);
                 BUG_ON(tmp->name == NULL);
@@ -66,19 +68,20 @@ void callback(bfd * abfd, asection * sect, void * obj)
         }
 
         if (tmp == NULL) {
-                /* Not found ... */
+                /* Not found, create a new one */
                 debug("Building new entry for section `%s'\n", name);
 
-                tmp = (struct entry *) xmalloc(sizeof(tmp));
+                tmp = (struct entry *) xmalloc(sizeof(*tmp));
                 tmp->name = xstrdup(name);
                 tmp->size = sect->size;
                 tmp->next = NULL;
 
-                /* Add it */
+                /* Add to the list */
                 tmp->next  = data->head;
                 data->head = tmp;
         } else {
-                error("Duplicated `%s' section found\n", name);
+                /* We got a duplicated section (name) ... */
+                BUG();
         }
 }
 
@@ -87,6 +90,8 @@ void help(void)
         message("%s [OPTION]...\n", PROGRAM_NAME);
         message("\n");
         message("Options:\n");
+
+        message("  -i, --input      specify input filename\n");
 
         message("  -d, --debug      enable debugging traces\n");
         message("  -v, --verbose    verbosely report processing\n");
@@ -124,12 +129,20 @@ void dump(struct callback_data * data)
         debug("Dumping entries\n");
 
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
+#if 0
                 message("%-*s  %*d  [ %5.2f ]\n",
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
                         tmp->size,
-                        (tmp->size / size_total) * 100);
+                        ((float) tmp->size / (float)size_total) * 100);
+#else
+                message(" [ %5.2f ] %s %d\n",
+                        ((float) tmp->size / (float) size_total) * 100,
+                        tmp->name,
+                        tmp->size
+                        );
+#endif
         }
 }
 
