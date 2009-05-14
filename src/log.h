@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifndef ELF_UTILS_LOG_H
 #define ELF_UTILS_LOG_H
@@ -35,14 +36,18 @@ typedef enum {
 void log_init(const char * banner,
               log_level_t  level);
 void log_level(log_level_t level);
-int  log_write(log_level_t level, const char * fmt, ...);
-void log_fini(void);
+int  log_write(log_level_t  level,
+               const char * format,
+               va_list      arguments);
 
-#define fatal(FMT,ARGS...)   log_write(LOG_FATAL,   FMT, ##ARGS)
-#define error(FMT,ARGS...)   log_write(LOG_ERROR,   FMT, ##ARGS)
-#define warning(FMT,ARGS...) log_write(LOG_WARNING, FMT, ##ARGS)
-#define verbose(FMT,ARGS...) log_write(LOG_VERBOSE, FMT, ##ARGS)
-#define message(FMT,ARGS...) log_write(LOG_MESSAGE, FMT, ##ARGS)
-#define debug(FMT,ARGS...)   log_write(LOG_DEBUG,   FMT, ##ARGS)
+/* An handful of helpful functions ... */
+int  fatal(const char * format,   ...);
+int  error(const char * format,   ...);
+int  warning(const char * format, ...);
+int  verbose(const char * format, ...);
+int  message(const char * format, ...);
+int  debug(const char * format,   ...);
+
+void log_fini(void);
 
 #endif /* ELF_UTILS_LOG_H */
