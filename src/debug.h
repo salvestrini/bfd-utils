@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "log.h"
+/* Do not use internal logging here, it could be buggy ... */
 
 #define BUG() {                                                 \
         fprintf(stderr, "Bug hit in '%s' (%s:%d)\n",            \
