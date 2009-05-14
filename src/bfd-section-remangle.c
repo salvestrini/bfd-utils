@@ -50,6 +50,9 @@ void help(void)
         message("\n");
         message("Options:\n");
 
+        message("  -i, --input      specify input filename\n");
+        message("  -o, --output     specify output filename\n");
+
         message("  -d, --debug      enable debugging traces\n");
         message("  -v, --verbose    verbosely report processing\n");
         message("  -V, --version    print this help, then exit\n");
