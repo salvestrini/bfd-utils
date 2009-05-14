@@ -37,4 +37,6 @@ void * xmalloc(size_t size);
 void   xfree(void * p);
 char * xstrdup(const char * s);
 
+#define max(A,B) ((A >= B) ? A : B)
+
 #endif /* ELF_UTILS_UTILS_H */

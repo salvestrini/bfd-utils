@@ -101,8 +101,6 @@ void help(void)
         message("Report bugs to <%s>\n", PACKAGE_BUGREPORT);
 }
 
-#define max(A,B) ((A >= B) ? A : B)
-
 void dump(struct callback_data * data)
 {
         struct entry * tmp;
