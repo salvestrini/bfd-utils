@@ -129,20 +129,12 @@ void dump(struct callback_data * data)
         debug("Dumping entries\n");
 
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-#if 0
-                message("%-*s  %*d  [ %5.2f ]\n",
+                message("%-*s  %*lld  [ %5.2f% ]\n",
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
                         tmp->size,
                         ((float) tmp->size / (float)size_total) * 100);
-#else
-                message(" [ %5.2f ] %s %d\n",
-                        ((float) tmp->size / (float) size_total) * 100,
-                        tmp->name,
-                        tmp->size
-                        );
-#endif
         }
 }
 
