@@ -47,31 +47,110 @@ void log_level(log_level_t level)
 
 int log_write(log_level_t  level,
               const char * format,
-              ...)
+              va_list      arguments)
 {
         BUG_ON(banner_ == NULL);
+        BUG_ON(format  == NULL);
 
-        va_list arguments;
-        int     i;
+        int i;
 
-        va_start(arguments, format);
         i = 0;
         if (level >= level_) {
-                FILE * stream = stdout;
+                FILE *  stream;
+                //va_list arguments;
+
+                stream = stdout;
+
+                /* Log to stderr from LOG_WARNING on */
                 if (level_ >= LOG_WARNING) {
-                        /* Log to stderr if level is ge warning */
                         stream = stderr;
                 }
+
+                /* Print the banner from LOG_WARNING on */
                 if (level_ >= LOG_WARNING) {
-                        /* Print the banner if level is ge warning */
                         fprintf(stream, "%s: ", banner_);
                 }
+
+                //va_start(arguments, format);
                 i = vfprintf(stream, format, arguments);
+                //va_end(arguments);
+
                 fflush(stream);
         }
-        va_end(arguments);
 
         return i;
+}
+
+int fatal(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_FATAL, format, arguments);
+        va_end(arguments);
+
+        return tmp;
+}
+
+int error(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_ERROR, format, arguments);
+        va_end(arguments);
+
+        return tmp;
+}
+
+int warning(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_WARNING, format, arguments);
+        va_end(arguments);
+
+        return tmp;
+}
+
+int verbose(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_VERBOSE, format, arguments);
+        va_end(arguments);
+
+        return tmp;
+}
+
+int message(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_MESSAGE, format, arguments);
+        va_end(arguments);
+
+        return tmp;
+}
+
+int debug(const char * format, ...)
+{
+        int     tmp;
+        va_list arguments;
+
+        va_start(arguments, format);
+        tmp = log_write(LOG_DEBUG, format, arguments);
+        va_end(arguments);
+
+        return tmp;
 }
 
 void log_fini(void)
