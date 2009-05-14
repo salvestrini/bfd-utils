@@ -105,11 +105,11 @@ void version(const char * program_name)
 }
 
 void hint(const char * program_name,
-          const char * message)
+          const char * mesg)
 {
         BUG_ON(program_name == NULL);
 
-        message("%s: %s\n", program_name, message);
+        message("%s: %s\n", program_name, mesg);
         message("Try `%s --help' for more information.\n", program_name);
 }
 
