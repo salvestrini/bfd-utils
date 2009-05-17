@@ -27,21 +27,6 @@
 #include "log.h"
 #include "utils.h"
 
-struct callback_data {
-	bfd * abfd;
-};
-
-void callback(bfd * bfd_in, asection * sect, void * obj)
-{
-	bfd * bfd_out;
-
-	BUG_ON(obj == NULL);
-	bfd_out = ((struct callback_data *) obj)->abfd;
-
-	debug("  Copying section %d %s",
-	      sect->index, bfd_section_name(abfd, sect));
-}
-
 void help(void)
 {
         message("%s [OPTION]...\n", PROGRAM_NAME);
@@ -54,6 +39,15 @@ void help(void)
         message("  -h, --help       print version number, then exit\n");
         message("\n");
         message("Report bugs to <%s>\n", PACKAGE_BUGREPORT);
+}
+
+int copy_archive(bfd * bfd_in;
+                 bfd * bfd_out)
+{
+        BUG_ON(bfd_in);
+        BUG_ON(bfd_off);
+
+        return 1;
 }
 
 int main(int argc, char * argv[])
@@ -73,6 +67,8 @@ int main(int argc, char * argv[])
 
         filename_in  = NULL;
         filename_out = NULL;
+        section_from = -1;
+        section_to   = -1;
 
         int c;
         // int digit_optind = 0;
@@ -83,6 +79,8 @@ int main(int argc, char * argv[])
                 static struct option long_options[] = {
                         { "input",        1, 0, 'i' },
                         { "output",       1, 0, 'o' },
+                        { "section-from", 1, 0, 'f' },
+                        { "section-to",   1, 0, 't' },
 
                         { "debug",        0, 0, 'd' },
                         { "verbose",      0, 0, 'v' },
@@ -90,7 +88,7 @@ int main(int argc, char * argv[])
                         { "help",         0, 0, 'h' },
                         { 0,              0, 0, 0   }
                 };
-                c = getopt_long(argc, argv, "dvVh",
+                c = getopt_long(argc, argv, "f:t:dvVh",
                                 long_options, &option_index);
                 if (c == -1) {
                         break;
@@ -99,6 +97,12 @@ int main(int argc, char * argv[])
                 debug("Handling option character '%c'\n", c);
 
                 switch (c) {
+                        case 'f':
+                                index_from = optarg;
+                                break;
+                        case 't':
+                                index_to = optarg;
+                                break;
                         case 'i':
                                 filename_in = optarg;
                                 break;
@@ -140,18 +144,16 @@ int main(int argc, char * argv[])
                 exit(EXIT_FAILURE);
         }
 
-	index_from = atoi(argv[3]);
 	if (index_from < 0) {
-		fatal("Wrong index from\n");
+		fatal("Wrong index-from\n");
                 exit(EXIT_FAILURE);
 	}
-	index_to = atoi(argv[4]);
 	if (index_to < 0) {
-		fatal("Wrong index to\n");
+		fatal("Wrong index-to\n");
                 exit(EXIT_FAILURE);
 	}
 	if (index_from == index_to) {
-		warning("Index from and index to are equal\n");
+		warning("Index-from and index-to are equal\n");
 	}
 
 	bfd_init();
@@ -194,14 +196,7 @@ int main(int argc, char * argv[])
 	debug("Generating output file %s", filename_out);
 	bfd_set_format(bfd_out, bfd_get_format(bfd_in));
 
-	if (bfd_copy_private_header_data(bfd_in, bfd_out) == FALSE) {
-		fatal("Cannot copy private header data (%s)",
-		      BFD_strerror());
-                exit(EXIT_FAILURE);
-        }
-
-	data.abfd = bfd_out;
-	bfd_map_over_sections(bfd_in, callback, &data);
+        copy_archive(ibfd, obfd);
 
 	bfd_close(bfd_in);
 	bfd_close(bfd_out);
