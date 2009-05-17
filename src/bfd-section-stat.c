@@ -87,11 +87,9 @@ void callback(bfd * abfd, asection * sect, void * obj)
 
 void help(void)
 {
-        message("%s [OPTION]...\n", PROGRAM_NAME);
+        message("%s [OPTION]... [FILE]...\n", PROGRAM_NAME);
         message("\n");
         message("Options:\n");
-
-        message("  -i, --input      specify input filename\n");
 
         message("  -d, --debug      enable debugging traces\n");
         message("  -v, --verbose    verbosely report processing\n");
@@ -127,7 +125,7 @@ void dump(struct callback_data * data)
         debug("Dumping entries\n");
 
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-                message("%-*s  %*lld  [ %5.2f% ]\n",
+                message("  %-*s  %*lld  [ %5.2f% ]\n",
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
@@ -158,31 +156,26 @@ void clear_entries(void)
 
 int main(int argc, char * argv[])
 {
-	bfd *                bfd_in;
-	char *               filename_in;
 	struct callback_data data;
+        int                  i;
+        int                  c;
 
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
 
-        filename_in = NULL;
-
-        int c;
         // int digit_optind = 0;
         while (1) {
                 // int this_option_optind = optind ? optind : 1;
                 int option_index       = 0;
 
                 static struct option long_options[] = {
-                        { "input",        0, 0, 'i' },
-
                         { "debug",        0, 0, 'd' },
                         { "verbose",      0, 0, 'v' },
                         { "version",      0, 0, 'V' },
                         { "help",         0, 0, 'h' },
                         { 0,              0, 0, 0   }
                 };
-                c = getopt_long(argc, argv, "i:dvVh",
+                c = getopt_long(argc, argv, "dvVh",
                                 long_options, &option_index);
                 if (c == -1) {
                         break;
@@ -191,9 +184,6 @@ int main(int argc, char * argv[])
                 debug("Handling option character '%c'\n", c);
 
                 switch (c) {
-                        case 'i':
-                                filename_in = optarg;
-                                break;
                         case 'd':
                                 log_level(LOG_DEBUG);
                                 break;
@@ -215,36 +205,48 @@ int main(int argc, char * argv[])
                 }
         }
 
-	if (!filename_in) {
-		hint(PROGRAM_NAME, "Missing input filename");
+        if (argc - optind <= 0) {
+                hint(PROGRAM_NAME, "Missing input file(s)");
                 exit(EXIT_FAILURE);
-	}
+        }
 
 	bfd_init();
+        atexit(clear_entries); /* Safe */
 
-	debug("Reading input file %s\n", filename_in);
+        message("\n");
+        for (i = optind; i < argc; i++) {
+                const char * filename;
+                bfd *        bfd_in;
 
-	bfd_in = bfd_openr(filename_in, NULL);
-	if (!bfd_in) {
-		fatal("Cannot open input file %s (%s)\n",
-		      filename_in, BFD_strerror());
-                exit(EXIT_FAILURE);
-	}
+                filename = argv[i];
+                BUG_ON(filename == NULL);
 
-	if (!bfd_check_format(bfd_in, bfd_object)) {
-		fatal("Wrong input file format (not an object)\n");
-                exit(EXIT_FAILURE);
-	}
+                debug("Reading input file %s\n", filename);
 
-        data.head  = NULL;
-        atexit(clear_entries);
+                bfd_in = bfd_openr(filename, NULL);
+                if (!bfd_in) {
+                        fatal("Cannot open input file %s (%s)\n",
+                              filename, BFD_strerror());
+                        exit(EXIT_FAILURE);
+                }
 
-        debug("Iterating sections\n");
-        bfd_map_over_sections(bfd_in, callback, &data);
+                if (!bfd_check_format(bfd_in, bfd_object)) {
+                        fatal("Wrong input file format (not an object)\n");
+                        exit(EXIT_FAILURE);
+                }
 
-        dump(&data);
+                data.head  = NULL;
 
-        bfd_close(bfd_in);
+                debug("Iterating sections\n");
+                bfd_map_over_sections(bfd_in, callback, &data);
+
+                message("%s:\n", filename);
+                dump(&data);
+                message("\n");
+
+                bfd_close(bfd_in);
+                clear_entries();
+        }
 
 	exit(EXIT_SUCCESS);
 }
