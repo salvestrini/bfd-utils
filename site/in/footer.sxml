@@ -34,11 +34,11 @@
  (a (@ (href "http://www.nongnu.org/sitetool"))
   ,as_site_variable_PROGRAMNAME)
  ", hosted at "
- (a (@ (href "http://savannah.nongnu.org/projects/dnt"))
+ (a (@ (href "http://savannah.nongnu.org/projects/bfd-utils"))
   "Savannah")
  (br)
  "Please send broken links and other web page suggestions to "
- "<dnt-generic AT nongnu DOT org>, thank you."
+ "<bfd-utils-generic AT nongnu DOT org>, thank you."
  (br)
  "This page was last modified on "
  ,(strftime "%A %d %B %Y" (localtime (current-time)))
