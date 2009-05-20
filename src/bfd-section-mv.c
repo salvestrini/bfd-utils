@@ -41,6 +41,7 @@ void help(void)
         message("Report bugs to <%s>\n", PACKAGE_BUGREPORT);
 }
 
+#if 0
 int copy_archive(bfd * bfd_in;
                  bfd * bfd_out)
 {
@@ -49,6 +50,7 @@ int copy_archive(bfd * bfd_in;
 
         return 1;
 }
+#endif
 
 int main(int argc, char * argv[])
 {
@@ -60,15 +62,18 @@ int main(int argc, char * argv[])
 	int                  index_to;
 	asection *           section_from;
 	asection *           section_to;
-	struct callback_data data;
 
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
 
         filename_in  = NULL;
         filename_out = NULL;
-        section_from = -1;
-        section_to   = -1;
+
+        section_from = NULL;
+        section_to   = NULL;
+
+        index_from   = -1;
+        index_to     = -1;
 
         int c;
         // int digit_optind = 0;
@@ -98,10 +103,10 @@ int main(int argc, char * argv[])
 
                 switch (c) {
                         case 'f':
-                                index_from = optarg;
+                                index_from = atoi(optarg);
                                 break;
                         case 't':
-                                index_to = optarg;
+                                index_to = atoi(optarg);
                                 break;
                         case 'i':
                                 filename_in = optarg;
@@ -196,7 +201,9 @@ int main(int argc, char * argv[])
 	debug("Generating output file %s", filename_out);
 	bfd_set_format(bfd_out, bfd_get_format(bfd_in));
 
+#if 0
         copy_archive(ibfd, obfd);
+#endif
 
 	bfd_close(bfd_in);
 	bfd_close(bfd_out);
