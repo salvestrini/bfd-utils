@@ -27,23 +27,6 @@
 #include "log.h"
 #include "utils.h"
 
-#if 0
-struct callback_data {
-	bfd * abfd;
-};
-
-void callback(bfd * bfd_in, asection * sect, void * obj)
-{
-	bfd * bfd_out;
-
-	BUG_ON(obj == NULL);
-	bfd_out = ((struct callback_data *) obj)->abfd;
-
-	debug("  Copying section %d %s\n",
-	      sect->index, bfd_section_name(abfd, sect));
-}
-#endif
-
 void help(void)
 {
         message("%s [OPTION]...\n", PROGRAM_NAME);
@@ -67,9 +50,6 @@ int main(int argc, char * argv[])
 	bfd *                bfd_out;
 	char *               filename_in;
 	char *               filename_out;
-#if 0
-	struct callback_data data;
-#endif
 
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
@@ -102,6 +82,12 @@ int main(int argc, char * argv[])
                 debug("Handling option character '%c'\n", c);
 
                 switch (c) {
+                        case 'i':
+                                filename_in = optarg;
+                                break;
+                        case 'o':
+                                filename_out = optarg;
+                                break;
                         case 'd':
                                 log_level(LOG_DEBUG);
                                 break;
