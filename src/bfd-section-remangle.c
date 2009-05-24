@@ -73,7 +73,7 @@ int main(int argc, char * argv[])
                         { "help",         0, 0, 'h' },
                         { 0,              0, 0, 0   }
                 };
-                c = getopt_long(argc, argv, "dvVh",
+                c = getopt_long(argc, argv, "i:o:dvVh",
                                 long_options, &option_index);
                 if (c == -1) {
                         break;
