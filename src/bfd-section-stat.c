@@ -130,20 +130,21 @@ void dump(struct callback_data * data)
                         tmp->name,
                         ((int) log10(size_total)) + 1,
                         tmp->size,
-                        ((float) tmp->size / (float)size_total) * 100);
+                        ((float) tmp->size / (float) size_total) * 100);
         }
 }
 
 static struct callback_data data;
 
-void clear_entries(void)
+/* This function (due to atexit()) uses implicitly the global 'data' var */
+void clear(void)
 {
         struct entry * tmp;
 
         debug("Cleaning-up entries\n");
         for (; data.head != NULL;) {
-                tmp       = data.head;
-                data.head = data.head->next;
+                tmp        = data.head;
+                data.head  = data.head->next;
 
                 BUG_ON(tmp == NULL);
                 BUG_ON(tmp->name == NULL);
@@ -211,12 +212,14 @@ int main(int argc, char * argv[])
         }
 
 	bfd_init();
-        atexit(clear_entries); /* Safe */
+        atexit(clear); /* Safe */
 
         message("\n");
         for (i = optind; i < argc; i++) {
                 const char * filename;
                 bfd *        bfd_in;
+
+                clear();
 
                 filename = argv[i];
                 BUG_ON(filename == NULL);
@@ -245,8 +248,9 @@ int main(int argc, char * argv[])
                 message("\n");
 
                 bfd_close(bfd_in);
-                clear_entries();
         }
+
+        clear();
 
 	exit(EXIT_SUCCESS);
 }
