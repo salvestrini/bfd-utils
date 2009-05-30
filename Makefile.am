@@ -187,15 +187,4 @@ update-download:
 
 update-local: Makefile update-download 
 
-maintainer-check-parameters: Makefile $(scripts)
-	for i in $(scripts) ; do \
-		echo @ECHO_N@ "Checking standard parameters for $$i... " ; \
-		if ( ./$$i -h 2>&1 > /dev/null ) ; then \
-			echo "@ECHO_T@ok" ; \
-		else \
-			echo "@ECHO_T@error" ; \
-			exit 1 ; \
-		fi ; \
-	done
-
-maintainer-check-local: Makefile maintainer-check-parameters
+maintainer-check-local: Makefile
