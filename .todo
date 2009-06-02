@@ -9,4 +9,7 @@
     <note priority="medium" time="1241018725">
         Release 0.3.0
     </note>
+    <note priority="low" time="1243950855">
+        Release 0.4.0
+    </note>
 </todo>
