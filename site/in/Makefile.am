@@ -75,7 +75,7 @@ todos.dump: $(top_srcdir)/.dnt.db
 	       --line-format="(li \"%t\")" \
 	       --width=0 \
 	       --output=todos.dump \
-	       --filter="not-done" || { \
+	       --filter="not done" || { \
 		rm -f todos.dump ; \
 		exit 1 ; \
 	}
