@@ -83,37 +83,32 @@ TODO: $(DNT_DB)
 MAINTAINERCLEANFILES += TODO
 
 NEWS: $(DNT_DB)
-	echo "${PACKAGE_VERSION}:" > NEWS
-	script="$(GITTAG_TO_DATE)";				\
-	r_head="";						\
-	d_head="";						\
-	r_tail="";						\
-	d_tail="";						\
-	for i in `$$script | sed -e 's/\ /:/g' | sort -r -k 2`;	\
-	do							\
-		if test "x$$r_head" = "x"; then			\
-			r_head="`echo $$i | sed 's/^.*://'`";	\
-			d_head="`echo $$i | sed 's/:.*$$//'`";	\
-			continue;				\
-		else						\
-			if test "x$$d_head" = "x"; then		\
-				rm -f NEWS;			\
-				exit 1;				\
-			fi;					\
-		fi;						\
-		r_tail="`echo $$i | sed 's/^.*://'`";		\
-		d_tail="`echo $$i | sed 's/:.*$$//'`";		\
-		echo "$$r_head:" >> NEWS;			\
-		echo "* $$d_tail -> $$d_head" >> NEWS;		\
-		r_head="$$r_tail";				\
-		d_head="$$d_tail";				\
-	done || {						\
-		rm -f NEWS ;					\
-		exit 1;						\
-	};							\
-	d_tail="1970-01-01";					\
-	echo "$$r_head:" >> NEWS;				\
-	echo "* $$d_tail -> $$d_head" >> NEWS
+	start="" ;								  \
+	end="`date +"%Y-%m-%d"`" ;						  \
+	script="$(GITTAG_TO_DATE)";						  \
+	rm -f NEWS ;								  \
+	for i in `$$script | $(SED) -e 's,.*\ ,,' | sort -r -k 2` ;		  \
+	do									  \
+		start="$$i" ;							  \
+		echo "$$start -> $$end" ;					  \
+		echo "$$end:" >> NEWS;						  \
+		$(DNT) $(DNT_FLAGS)						  \
+			show							  \
+			--filter="start>=\"$$start\" and end<=\"$$end\" and done" \
+			--line-format="  %t"					  \
+			--level-fill=""						  \
+			--indent-fill=""					  \
+			--unindent-fill=""					  \
+			--width=0						  \
+			--hide-collapsed					  \
+		>> NEWS ;							  \
+		echo "" >> NEWS ;						  \
+		end="$$start" ;							  \
+		start=$$i ;							  \
+	done || {								  \
+		rm -f NEWS ;							  \
+		exit 1 ;							  \
+	}
 MAINTAINERCLEANFILES += NEWS
 
 AUTHORS:
