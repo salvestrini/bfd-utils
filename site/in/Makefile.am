@@ -38,8 +38,8 @@ SITE_SRCS =					\
 	todos.sxml				\
 	news.sxml
 
-EXTRA_DIST  = $(SITE_SRCS)
-CLEAN_FILES =
+EXTRA_DIST = $(SITE_SRCS)
+CLEANFILES =
 
 news.dump: $(top_srcdir)/.dnt.db
 	$(DNT) --database=$(top_srcdir)/.dnt.db \
@@ -54,7 +54,7 @@ news.dump: $(top_srcdir)/.dnt.db
 		rm -f news.dump ; \
 		exit 1 ; \
 	}
-CLEAN_FILES += news.dump
+CLEANFILES += news.dump
 
 news.sxml: news.dump
 	rm -f news.sxml && \
@@ -64,7 +64,7 @@ news.sxml: news.dump
 		rm -f news.sxml ; \
 		exit 1 ; \
 	}
-CLEAN_FILES += news.sxml
+CLEANFILES += news.sxml
 
 todos.dump: $(top_srcdir)/.dnt.db
 	$(DNT) --database=$(top_srcdir)/.dnt.db \
@@ -79,7 +79,7 @@ todos.dump: $(top_srcdir)/.dnt.db
 		rm -f todos.dump ; \
 		exit 1 ; \
 	}
-CLEAN_FILES += todos.dump
+CLEANFILES += todos.dump
 
 todos.sxml: todos.dump
 	rm -f todos.sxml && \
@@ -89,7 +89,7 @@ todos.sxml: todos.dump
 		rm -f todos.sxml ; \
 		exit 1 ; \
 	}
-CLEAN_FILES += todos.sxml
+CLEANFILES += todos.sxml
 
 site: $(SITE_SRCS)
 	$(SITETOOL) -v --mode initialize && \
