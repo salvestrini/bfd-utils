@@ -34,7 +34,7 @@ AC_CONFIG_SRCDIR([src/bfd-section-stat.c])
 # For automake options (AM_INIT_AUTOMAKE options) see Makefile.am
 # file, AUTOMAKE_OPTIONS variable
 #
-AM_INIT_AUTOMAKE([1.10 foreign -Wall])
+AM_INIT_AUTOMAKE([1.10 foreign std-options -Wall])
 
 #
 # Build related programs
