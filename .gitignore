@@ -25,6 +25,7 @@ Makefile
 /src/bfd-section-mv
 /src/bfd-section-stat
 /src/bfd-section-remangle
+/src/bfd-section-symbols
 
 /src/gnulib/sys/stat.h
 /src/gnulib/alloca.h

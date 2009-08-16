@@ -32,7 +32,8 @@ bin_PROGRAMS =					\
 	bfd-section-stat			\
 	bfd-section-ls				\
 	bfd-section-mv				\
-	bfd-section-remangle
+	bfd-section-remangle			\
+	bfd-section-symbols
 
 common_LDADD =					\
 	libcommon.a				\
@@ -71,6 +72,14 @@ bfd_section_remangle_CPPFLAGS =				\
 	-D 'PROGRAM_NAME="bfd-section-remangle"'	\
 	$(EXTRA_CPPFLAGS)
 bfd_section_remangle_LDADD =			\
+	$(common_LDADD)
+
+bfd_section_symbols_SOURCES =			\
+	bfd-section-symbols.c
+bfd_section_symbols_CPPFLAGS =			\
+	-D 'PROGRAM_NAME="bfd-section-symbols"'	\
+	$(EXTRA_CPPFLAGS)
+bfd_section_symbols_LDADD =			\
 	$(common_LDADD)
 
 
