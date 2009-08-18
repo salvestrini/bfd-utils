@@ -25,8 +25,17 @@ EXTRA_DIST =					\
 	whitespace-detect.in			\
 	gitlog-to-committers.in			\
 	gittag-to-date.in			\
-	python-autofrisk			\
-	\
+						\
+	git-version-gen				\
+	gitlog-to-changelog			\
+	announce-gen
+
+scripts =					\
+	fetch					\
+	whitespace-detect			\
+	gitlog-to-committers			\
+	gittag-to-date				\
+						\
 	git-version-gen				\
 	gitlog-to-changelog			\
 	announce-gen
