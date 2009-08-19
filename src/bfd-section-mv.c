@@ -54,14 +54,14 @@ int copy_archive(bfd * bfd_in;
 
 int main(int argc, char * argv[])
 {
-	bfd *                bfd_in;
-	bfd *                bfd_out;
-	char *               filename_in;
-	char *               filename_out;
-	int                  index_from;
-	int                  index_to;
-	asection *           section_from;
-	asection *           section_to;
+        bfd *                bfd_in;
+        bfd *                bfd_out;
+        char *               filename_in;
+        char *               filename_out;
+        int                  index_from;
+        int                  index_to;
+        asection *           section_from;
+        asection *           section_to;
 
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
@@ -135,78 +135,78 @@ int main(int argc, char * argv[])
                 }
         }
 
-	if (!filename_in) {
-		fatal("Missing input filename\n");
+        if (!filename_in) {
+                fatal("Missing input filename\n");
                 exit(EXIT_FAILURE);
-	}
-	if (!filename_out) {
-		fatal("Missing output filename\n");
+        }
+        if (!filename_out) {
+                fatal("Missing output filename\n");
                 exit(EXIT_FAILURE);
-	}
+        }
         /* XXX FIXME: Use stat instead of strcmp */
         if (!strcmp(filename_in, filename_out)) {
-		fatal("Input and output are the same file\n");
+                fatal("Input and output are the same file\n");
                 exit(EXIT_FAILURE);
         }
 
-	if (index_from < 0) {
-		fatal("Wrong index-from\n");
+        if (index_from < 0) {
+                fatal("Wrong index-from\n");
                 exit(EXIT_FAILURE);
-	}
-	if (index_to < 0) {
-		fatal("Wrong index-to\n");
+        }
+        if (index_to < 0) {
+                fatal("Wrong index-to\n");
                 exit(EXIT_FAILURE);
-	}
-	if (index_from == index_to) {
-		warning("Index-from and index-to are equal\n");
-	}
+        }
+        if (index_from == index_to) {
+                warning("Index-from and index-to are equal\n");
+        }
 
-	bfd_init();
+        bfd_init();
 
-	debug("Reading input file %s", filename_in);
-	bfd_in = bfd_openr(filename_in, NULL);
-	if (!bfd_in) {
-		fatal("Cannot open input file %s (%s)",
-		      filename_in, BFD_strerror());
+        debug("Reading input file %s", filename_in);
+        bfd_in = bfd_openr(filename_in, NULL);
+        if (!bfd_in) {
+                fatal("Cannot open input file %s (%s)",
+                      filename_in, BFD_strerror());
                 exit(EXIT_FAILURE);
-	}
-	if (!bfd_check_format(bfd_in, bfd_object)) {
-		fatal("Wrong input file format (not an object)\n");
+        }
+        if (!bfd_check_format(bfd_in, bfd_object)) {
+                fatal("Wrong input file format (not an object)\n");
                 exit(EXIT_FAILURE);
-	}
+        }
 
-	section_from = BFD_find(bfd_in, index_from);
-	if (!section_from) {
-		fatal("Cannot find section number %d", index_from);
+        section_from = BFD_find(bfd_in, index_from);
+        if (!section_from) {
+                fatal("Cannot find section number %d", index_from);
                 exit(EXIT_FAILURE);
-	}
-	debug("Section %d is %s",
-	      index_from, bfd_section_name(bfd_in, section_from));
+        }
+        debug("Section %d is %s",
+              index_from, bfd_section_name(bfd_in, section_from));
 
-	section_to = BFD_find(bfd_in, index_to);
-	if (!section_to) {
-		fatal("Cannot find section number %d", index_to);
+        section_to = BFD_find(bfd_in, index_to);
+        if (!section_to) {
+                fatal("Cannot find section number %d", index_to);
                 exit(EXIT_FAILURE);
-	}
-	debug("Section %d is %s",
-	      index_to, bfd_section_name(bfd_in, section_to));
+        }
+        debug("Section %d is %s",
+              index_to, bfd_section_name(bfd_in, section_to));
 
-	bfd_out = bfd_openw(filename_out, NULL);
-	if (!bfd_out) {
-		fatal("Cannot open output file %s (%s)",
-		      filename_out, BFD_strerror());
+        bfd_out = bfd_openw(filename_out, NULL);
+        if (!bfd_out) {
+                fatal("Cannot open output file %s (%s)",
+                      filename_out, BFD_strerror());
                 exit(EXIT_FAILURE);
-	}
+        }
 
-	debug("Generating output file %s", filename_out);
-	bfd_set_format(bfd_out, bfd_get_format(bfd_in));
+        debug("Generating output file %s", filename_out);
+        bfd_set_format(bfd_out, bfd_get_format(bfd_in));
 
 #if 0
         copy_archive(ibfd, obfd);
 #endif
 
-	bfd_close(bfd_in);
-	bfd_close(bfd_out);
+        bfd_close(bfd_in);
+        bfd_close(bfd_out);
 
-	exit(EXIT_SUCCESS);
+        exit(EXIT_SUCCESS);
 }

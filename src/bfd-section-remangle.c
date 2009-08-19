@@ -46,10 +46,10 @@ void help(void)
 
 int main(int argc, char * argv[])
 {
-	bfd *                bfd_in;
-	bfd *                bfd_out;
-	char *               filename_in;
-	char *               filename_out;
+        bfd *                bfd_in;
+        bfd *                bfd_out;
+        char *               filename_in;
+        char *               filename_out;
 
         log_init(PROGRAM_NAME, LOG_MESSAGE);
         atexit(log_fini);
@@ -109,57 +109,57 @@ int main(int argc, char * argv[])
                 }
         }
 
-	if (!filename_in) {
-		fatal("Missing input filename\n");
+        if (!filename_in) {
+                fatal("Missing input filename\n");
                 exit(EXIT_FAILURE);
-	}
-	if (!filename_out) {
-		fatal("Missing output filename\n");
+        }
+        if (!filename_out) {
+                fatal("Missing output filename\n");
                 exit(EXIT_FAILURE);
-	}
+        }
         /* XXX FIXME: Use stat instead of strcmp */
         if (!strcmp(filename_in, filename_out)) {
-		fatal("Input and output are the same file\n");
+                fatal("Input and output are the same file\n");
                 exit(EXIT_FAILURE);
         }
 
-	bfd_init();
+        bfd_init();
 
-	debug("Reading input file %s\n", filename_in);
-	bfd_in = bfd_openr(filename_in, NULL);
-	if (!bfd_in) {
-		fatal("Cannot open input file %s (%s)\n",
-		      filename_in, BFD_strerror());
-                exit(EXIT_FAILURE);
-	}
-	if (!bfd_check_format(bfd_in, bfd_object)) {
-		fatal("Wrong input file format (not an object)\n");
-                exit(EXIT_FAILURE);
-	}
-
-	bfd_out = bfd_openw(filename_out, NULL);
-	if (!bfd_out) {
-		fatal("Cannot open output file %s (%s)\n",
-		      filename_out, BFD_strerror());
-                exit(EXIT_FAILURE);
-	}
-
-	debug("Generating output file %s\n", filename_out);
-	bfd_set_format(bfd_out, bfd_get_format(bfd_in));
-
-	if (bfd_copy_private_bfd_data(bfd_in, bfd_out) == FALSE) {
-		fatal("Cannot copy private bfd data (%s)\n",
-		      BFD_strerror());
+        debug("Reading input file %s\n", filename_in);
+        bfd_in = bfd_openr(filename_in, NULL);
+        if (!bfd_in) {
+                fatal("Cannot open input file %s (%s)\n",
+                      filename_in, BFD_strerror());
                 exit(EXIT_FAILURE);
         }
-	if (bfd_copy_private_header_data(bfd_in, bfd_out) == FALSE) {
-		fatal("Cannot copy private header data (%s)\n",
-		      BFD_strerror());
+        if (!bfd_check_format(bfd_in, bfd_object)) {
+                fatal("Wrong input file format (not an object)\n");
                 exit(EXIT_FAILURE);
         }
 
-	bfd_close(bfd_in);
-	bfd_close(bfd_out);
+        bfd_out = bfd_openw(filename_out, NULL);
+        if (!bfd_out) {
+                fatal("Cannot open output file %s (%s)\n",
+                      filename_out, BFD_strerror());
+                exit(EXIT_FAILURE);
+        }
 
-	exit(EXIT_SUCCESS);
+        debug("Generating output file %s\n", filename_out);
+        bfd_set_format(bfd_out, bfd_get_format(bfd_in));
+
+        if (bfd_copy_private_bfd_data(bfd_in, bfd_out) == FALSE) {
+                fatal("Cannot copy private bfd data (%s)\n",
+                      BFD_strerror());
+                exit(EXIT_FAILURE);
+        }
+        if (bfd_copy_private_header_data(bfd_in, bfd_out) == FALSE) {
+                fatal("Cannot copy private header data (%s)\n",
+                      BFD_strerror());
+                exit(EXIT_FAILURE);
+        }
+
+        bfd_close(bfd_in);
+        bfd_close(bfd_out);
+
+        exit(EXIT_SUCCESS);
 }

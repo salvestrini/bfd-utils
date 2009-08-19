@@ -40,16 +40,16 @@ struct callback_data {
 
 void callback(bfd * abfd, asection * sect, void * obj)
 {
-	struct callback_data * data;
+        struct callback_data * data;
         const char *           name;
         struct entry *         tmp;
 
-	BUG_ON(abfd  == NULL);
-	BUG_ON(sect  == NULL);
-	BUG_ON(obj   == NULL);
+        BUG_ON(abfd  == NULL);
+        BUG_ON(sect  == NULL);
+        BUG_ON(obj   == NULL);
 
         /* Retrieve our data */
-	data = (struct callback_data *) obj;
+        data = (struct callback_data *) obj;
 
         /* Find section name */
         name = bfd_section_name(abfd, sect);
@@ -157,7 +157,7 @@ void clear(void)
 
 int main(int argc, char * argv[])
 {
-	struct callback_data data;
+        struct callback_data data;
         int                  i;
         int                  c;
 
@@ -211,7 +211,7 @@ int main(int argc, char * argv[])
                 exit(EXIT_FAILURE);
         }
 
-	bfd_init();
+        bfd_init();
         atexit(clear); /* Safe */
 
         message("\n");
@@ -252,5 +252,5 @@ int main(int argc, char * argv[])
 
         clear();
 
-	exit(EXIT_SUCCESS);
+        exit(EXIT_SUCCESS);
 }
