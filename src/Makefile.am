@@ -118,5 +118,7 @@ maintainer-check-parameters: Makefile $(bin_PROGRAMS)
 		fi ; \
 	done
 
-maintainer-check-local: Makefile maintainer-check-parameters
+maintainer-check-whitespaces: Makefile
 	$(WHITESPACE_DETECT)  $(all_SRCS)
+
+maintainer-check-local: Makefile maintainer-check-whitespaces maintainer-check-parameters
