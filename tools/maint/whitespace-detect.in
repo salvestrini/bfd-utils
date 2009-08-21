@@ -88,14 +88,24 @@ for my $i (0 .. $#ARGV) {
 	exit 1;
     }
 
+    my $lineno = 0;
     while (<$filehandle>) {
+        $lineno++;
+	if ($_ =~ /^[ ]*[\t]+[ ]*/) {
+	    $found = 1;
+	    print STDERR
+		"$program: File \`" . $filename . "' " .
+		"contains initial tabs at line " . $lineno . "\n";
+
+	    #last;
+	}
 	if ($_ =~ /[ \t]+$/) {
 	    $found = 1;
 	    print STDERR
 		"$program: File \`" . $filename . "' " .
-		"contains extra whites\n";
+		"contains trailing whites at line " . $lineno . "\n";
 
-	    last;
+	    #last;
 	}
     }
 
