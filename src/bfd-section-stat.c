@@ -23,6 +23,7 @@
 #include <getopt.h>
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 
 #include "utils.h"
 #include "log.h"
@@ -32,6 +33,7 @@ struct entry {
         struct entry * next;
         char *         name;
         bfd_size_type  size;
+        int            index;
 };
 
 struct callback_data {
@@ -43,6 +45,8 @@ void callback(bfd * abfd, asection * sect, void * obj)
         struct callback_data * data;
         const char *           name;
         struct entry *         tmp;
+        struct entry *         iter_c;
+        struct entry *         iter_p;
 
         BUG_ON(abfd  == NULL);
         BUG_ON(sect  == NULL);
@@ -57,32 +61,77 @@ void callback(bfd * abfd, asection * sect, void * obj)
 
         debug("Callback called for `%s'\n", name);
 
-        /* Find the section in our list (if already present ...) */
-        for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-                debug("Comparing `%s'\n", tmp->name);
-                BUG_ON(tmp->name == NULL);
-                if (!strcmp(tmp->name, name)) {
-                        /* Got it */
+        /*
+         * We must not find duplicated sections
+         */
+        for (iter_c = data->head; iter_c != NULL; iter_c = iter_c->next) {
+                debug("Comparing `%s'\n", iter_c->name);
+                BUG_ON(iter_c->name == NULL);
+                BUG_ON(!strcmp(iter_c->name, name));
+        }
+
+        /* Not found, create a new one */
+        debug("Building new entry for section `%s'\n", name);
+        tmp = (struct entry *) xmalloc(sizeof(*tmp));
+        tmp->name  = xstrdup(name);
+        tmp->size  = sect->size;
+        tmp->index = sect->index;
+        tmp->next  = NULL;
+
+        /* Add newly created item to the list (in sorted order) */
+        debug("Inserting entry %p, sorted by index (index = %d)\n",
+              tmp, tmp->index);
+
+        iter_p = NULL;
+        iter_c = data->head;
+
+        for (;;) {
+                if (iter_c == NULL) {
+                        debug("Reached list end\n");
                         break;
+                }
+
+                debug("iter_p = %p, iter_c = %p (index = %d)\n",
+                      iter_p, iter_c, iter_c->index);
+
+                if (tmp->index >= iter_c->index) {
+                        debug("Skipping %p\n", iter_c);
+                        iter_p = iter_c;
+                        iter_c = iter_c->next;
+                } else {
+                        debug("We must insert the element between %p and %p\n",
+                              iter_p, iter_c);
+
+                        if (iter_p == NULL) {
+                                /* Head insert, done later ... */
+                                debug("Entry %p must be head-inserted\n", tmp);
+
+                                tmp->next  = data->head;
+                                data->head = tmp;
+                        } else {
+                                /* List insert */
+                                tmp->next= iter_c;
+                                iter_p->next = tmp;
+                        }
+                        debug("Done!\n");
+
+                        return;
                 }
         }
 
-        if (tmp == NULL) {
-                /* Not found, create a new one */
-                debug("Building new entry for section `%s'\n", name);
+        /* We didn't add anything since now ... */
+        if (iter_p == NULL) {
+                /* Head insert, done later ... */
+                debug("Entry %p must be head-inserted\n", tmp);
 
-                tmp = (struct entry *) xmalloc(sizeof(*tmp));
-                tmp->name = xstrdup(name);
-                tmp->size = sect->size;
-                tmp->next = NULL;
-
-                /* Add to the list */
                 tmp->next  = data->head;
                 data->head = tmp;
         } else {
-                /* We got a duplicated section (name) ... */
-                BUG();
+                /* List insert */
+                tmp->next= iter_c;
+                iter_p->next = tmp;
         }
+        debug("Done!\n");
 }
 
 void help(void)
@@ -102,6 +151,7 @@ void help(void)
 void dump(struct callback_data * data)
 {
         struct entry * tmp;
+        int            max_index;
         size_t         max_name_length;
         bfd_size_type  size_total;
 
@@ -109,23 +159,31 @@ void dump(struct callback_data * data)
 
         BUG_ON(data == NULL);
 
+        max_index       = 0;
         max_name_length = 0;
         size_total      = 0;
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
                 max_name_length = max(max_name_length, strlen(tmp->name));
                 size_total      = size_total + tmp->size;
+                if (tmp->index >= max_index) {
+                        max_index = tmp->index;
+                }
         }
 
+        debug("max_index       = %d\n", max_index);
         debug("max_name_length = %d\n", max_name_length);
         debug("size_total      = %d\n", size_total);
 
-        BUG_ON(max_name_length == 0);
-        BUG_ON(size_total      <= 0);
+        BUG_ON(max_index       <  0);
+        BUG_ON(max_name_length <= 0);
+        BUG_ON(size_total      <  0);
 
         debug("Dumping entries\n");
 
         for (tmp = data->head; tmp != NULL; tmp = tmp->next) {
-                message("  %-*s  %*lld  [ %5.2f% ]\n",
+                message("  %-*d %-*s  %*lld  [ %5.2f% ]\n",
+                        ((int) log10(max_index)) + 1,
+                        tmp->index,
                         max_name_length,
                         tmp->name,
                         ((int) log10(size_total)) + 1,
@@ -224,7 +282,7 @@ int main(int argc, char * argv[])
                 filename = argv[i];
                 BUG_ON(filename == NULL);
 
-                debug("Reading input file %s\n", filename);
+                debug("Reading input file `%s'\n", filename);
 
                 bfd_in = bfd_openr(filename, NULL);
                 if (!bfd_in) {
