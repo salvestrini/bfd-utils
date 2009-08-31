@@ -25,6 +25,7 @@ AC_DEFUN([GNULIB_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -42,9 +43,12 @@ AC_DEFUN([GNULIB_INIT],
   m4_pushdef([GNULIB_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='./src/gnulib'
-  gl_GETOPT
+  gl_FUNC_GETOPT_GNU
+  gl_MODULE_INDICATOR([getopt-gnu])
+  gl_FUNC_GETOPT_POSIX
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  gl_STDDEF_H
   gl_UNISTD_H
   m4_ifval(GNULIB_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([GNULIB_LIBSOURCES_DIR])[ ||
@@ -185,10 +189,14 @@ AC_DEFUN([GNULIB_FILE_LIST], [
   lib/getopt1.c
   lib/getopt_int.h
   lib/gettext.h
+  lib/stddef.in.h
   lib/unistd.in.h
   m4/00gnulib.m4
+  m4/extensions.m4
   m4/getopt.m4
   m4/gnulib-common.m4
   m4/include_next.m4
+  m4/stddef_h.m4
   m4/unistd_h.m4
+  m4/wchar_t.m4
 ])
