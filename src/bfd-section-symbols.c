@@ -22,6 +22,7 @@
 #include <bfd.h>
 #include <math.h>
 #include <getopt.h>
+#include <unistd.h>
 
 #include "log.h"
 #include "debug.h"
@@ -62,10 +63,13 @@ void callback(bfd * abfd, asection * sect, void * obj)
 
         BUG_ON(number_of_symbols < 0);
 
-        for (i = 0; i < number_of_symbols; i++) {
-                message("    %c %s\n",
-                        bfd_decode_symclass(symbol_table[i]),
-                        symbol_table[i]->name);
+        if (number_of_symbols > 0) {
+                for (i = 0; i < number_of_symbols; i++) {
+                        message("    %c %s\n",
+                                bfd_decode_symclass(symbol_table[i]),
+                                symbol_table[i]->name);
+                }
+                message("\n");
         }
 
         xfree(symbol_table);
@@ -169,7 +173,6 @@ int main(int argc, char * argv[])
 
                 message("%s:\n", filename);
                 bfd_map_over_sections(bfd_in, callback, &data);
-                message("\n");
 
                 bfd_close(bfd_in);
         }

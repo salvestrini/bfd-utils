@@ -22,6 +22,7 @@
 #include <bfd.h>
 #include <math.h>
 #include <getopt.h>
+#include <unistd.h>
 
 #include "log.h"
 #include "debug.h"

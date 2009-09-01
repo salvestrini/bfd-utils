@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfd.h>
-#include <getopt.h>
 #include <math.h>
 #include <string.h>
 #include <assert.h>
+#include <getopt.h>
+#include <unistd.h>
 
 #include "utils.h"
 #include "log.h"

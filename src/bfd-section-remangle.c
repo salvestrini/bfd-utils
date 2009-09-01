@@ -20,8 +20,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <bfd.h>
-#include <getopt.h>
 #include <string.h>
+#include <getopt.h>
+#include <unistd.h>
 
 #include "debug.h"
 #include "log.h"
