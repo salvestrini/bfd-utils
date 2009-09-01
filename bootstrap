@@ -30,18 +30,57 @@ missing ()
     PROGRAM=$1
 
     if test x"$PROGRAM" = x""; then
-	return 1
+        return 1
     fi
     IFS=":"
 
     for i in $PATH
     do
-
-	if test -f $i/$PROGRAM; then
-	    echo $i/$PROGRAM
-	    return 0
-	fi
+        test -f $i/$PROGRAM && { echo $i/$PROGRAM; return 0; }
     done
+
+    return 1
+}
+
+optional ()
+{
+    PROGRAM=$1
+
+    if test "x${PROGRAM}" = "x"; then
+        return 1
+    fi
+
+    X=`missing ${PROGRAM}` && { echo $X; }
+
+    return 0
+}
+
+required_one ()
+{
+    PROGRAMS=$1
+
+    if test "x${PROGRAMS}" = "x"; then
+        return 1
+    fi
+
+    IFS=' '
+
+    for i in $PROGRAMS
+    do
+        X=`missing ${i}` && { echo $X; return 0; }
+    done
+
+    return 1
+}
+
+required ()
+{
+    PROGRAM=$1
+
+    if test "x${PROGRAM}" = "x"; then
+        return 1
+    fi
+    X=`missing ${PROGRAM}` && { echo $X; return 0; }
 
     return 1
 }
@@ -49,37 +88,56 @@ missing ()
 #
 # External tools
 #
-AUTOHEADER=`missing autoheader`
-ACLOCAL=`missing aclocal`
-AUTOCONF=`missing autoconf`
-AUTOMAKE=`missing automake`
-AUTORECONF=`missing autoreconf`
-LIBTOOL=`( missing glibtool || missing libtool )`
-LIBTOOLIZE=`( missing glibtoolize || missing libtoolize)`
-GNULIBTOOL=`missing gnulib-tool`
-GIT=`missing git`
-SED=`missing sed`
+AUTOHEADER="`required autoheader`"                 || \
+    { echo "Missing tool: autoheader"; exit 1; }
+ACLOCAL="`required aclocal`"                       || \
+    { echo "Missing tool: aclocal"; exit 1; }
+AUTOCONF="`required autoconf`"                     || \
+    { echo "Missing tool: autoconf"; exit 1; }
+AUTOMAKE="`required automake`"                     || \
+    { echo "Missing tool: automake"; exit 1; }
+AUTORECONF="`required autoreconf`"                 || \
+    { echo "Missing tool: autoreconf"; exit 1; }
+LIBTOOL="`required_one libtool glibtool`"          || \
+    { echo "Missing tool: libtool"; exit 1; }
+LIBTOOLIZE="`required_one libtoolize glibtoolize`" || \
+    { echo "Missing tool: libtoolize"; exit 1; }
+GNULIBTOOL="`required gnulib-tool`"                || \
+    { echo "Missing tool: gnulib-tool"; exit 1; }
+GIT="`required git`"                               || \
+    { echo "Missing tool: git"; exit 1; }
+SED="`required sed`"                               || \
+    { echo "Missing tool: sed"; exit 1; }
+GUILE_TOOLS="`required guile-tools`"               || \
+    { echo "Missing tool: guile-tools"; exit 1; }
+PYTHON_AUTOFRISK="`required python-autofrisk`"     || \
+    { echo "Missing tool: python-autofrisk"; exit 1; }
+PERL_AUTOFRISK="`required perl-autofrisk`"         || \
+    { echo "Missing tool: perl-autofrisk"; exit 1; }
 
 #
 # Dump some useful informations
 #
 echo "$ME: Dumping build-tools information ..."
-for tool in	\
-    $SED        \
-    $GIT        \
-    $AUTOHEADER	\
-    $AUTOCONF	\
-    $LIBTOOL	\
-    $LIBTOOLIZE	\
-    $ACLOCAL	\
-    $AUTOMAKE	\
-    $AUTORECONF	\
-    $GNULIBTOOL \
+for tool in                                     \
+    $SED                                        \
+    $GIT                                        \
+    $AUTOHEADER                                 \
+    $AUTOCONF                                   \
+    $LIBTOOL                                    \
+    $LIBTOOLIZE                                 \
+    $ACLOCAL                                    \
+    $AUTOMAKE                                   \
+    $AUTORECONF                                 \
+    $GNULIBTOOL                                 \
+    $GUILE_TOOLS                                \
+    $PYTHON_AUTOFRISK                           \
+    $PERL_AUTOFRISK                             \
     ;
 do
     if test -n "$tool" ; then
-	TOOLVER=`$tool --version | head -1`
-	echo "$ME:  $tool -> $TOOLVER"
+        VERSION=`$tool --version | head -1`
+        echo "$ME:  $tool -> $VERSION"
     fi
 done
 
@@ -106,6 +164,40 @@ rm -rf autom4te.cache                                || exit 1
 rm -rf `find ./ -name ".deps"`                       || exit 1
 
 #
+# Autofrisk modules
+#
+if test -e ./python.af ; then
+    echo "$ME: Python autofrisk ..."
+    $PYTHON_AUTOFRISK ./python.af && \
+        cat ./python.af.m4 > ./tools/autotools/m4/python-autofrisk-data.m4 && \
+        rm -f ./python.af.m4 || {
+        rm -f ./python.af.m4
+        rm -f ./tools/autotools/m4/python-autofrisk-data.m4
+        exit 1
+    }
+fi
+if test -e ./perl.af ; then
+    echo "$ME: Perl autofrisk ..."
+    $PERL_AUTOFRISK ./perl.af && \
+        cat ./perl.af.m4 > ./tools/autotools/m4/perl-autofrisk-data.m4 && \
+        rm -f ./perl.af.m4 || {
+        rm -f ./perl.af.m4
+        rm -f ./tools/autotools/m4/perl-autofrisk-data.m4
+        exit 1
+    }
+fi
+if test -e ./guile.af ; then
+    echo "$ME: Guile autofrisk ..."
+    $GUILE_TOOLS autofrisk ./guile.af && \
+        cat ./guile.af.m4 | sed -e 's/AUTOFRISK_/GUILE_AUTOFRISK_/g' > ./tools/autotools/m4/guile-autofrisk-data.m4 && \
+        rm -f ./guile.af.m4 || {
+        rm -f ./guile.af.m4
+        rm -f ./tools/autotools/m4/guile-autofrisk-data.m4
+        exit 1
+    }
+fi
+
+#
 # configure.ac
 #
 echo "$ME: Building configure.ac from configure.ac.in"
@@ -118,7 +210,10 @@ chmod a-w configure.ac
 #
 # Call gnulib
 #
-if test -n "$GNULIBTOOL" ; then
+GNULIBMODULES="getopt-posix"
+if test -n "$GNULIBMODULES" ; then
+    echo "$ME: Calling gnulib-tool (importing modules $GNULIBMODULES)"
+    rm -r -f ./src/gnulib
     $GNULIBTOOL \
         --lgpl \
         --no-changelog \
@@ -127,18 +222,31 @@ if test -n "$GNULIBTOOL" ; then
         --aux-dir=./tools/autotools \
         --m4-base=./tools/autotools/m4 \
         --source-base=./src/gnulib \
-        --import getopt || exit 1
+        --import $GNULIBMODULES || exit 1
 fi
 
 #
 # autoreconf
 #
-echo "$ME: Handling autotools bootstrap ..."
-
-echo "$ME: Running autoreconf ..."
-$ACLOCAL    --force --install -I ./tools/autotools/m4 && \
-    $AUTORECONF --verbose --force --install -Wall         || {
+echo "$ME: Running autoreconf (autoreconf extra flags $AUTORECONF_FLAGS)..."
+$AUTORECONF \
+    --verbose \
+    --force \
+    --install \
+    --warnings=all \
+    $AUTORECONF_FLAGS || {
     exit 1
 }
+
+#
+# bootstrap other packages
+#
+for i in $SUBDIRS
+do
+    (cd $i && ./bootstrap) || {
+        echo "$ME: Cannot bootstrap $i directory"
+        exit 1
+    }
+done
 
 exit 0
