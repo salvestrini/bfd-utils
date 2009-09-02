@@ -4,6 +4,7 @@
 # bootstrap
 #
 # Copyright (C) 2008, 2009 Francesco Salvestrini
+#                          Alessandro Massignan
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,32 +89,12 @@ required ()
 #
 # External tools
 #
-AUTOHEADER="`required autoheader`"                 || \
-    { echo "Missing tool: autoheader"; exit 1; }
-ACLOCAL="`required aclocal`"                       || \
-    { echo "Missing tool: aclocal"; exit 1; }
-AUTOCONF="`required autoconf`"                     || \
-    { echo "Missing tool: autoconf"; exit 1; }
-AUTOMAKE="`required automake`"                     || \
-    { echo "Missing tool: automake"; exit 1; }
-AUTORECONF="`required autoreconf`"                 || \
-    { echo "Missing tool: autoreconf"; exit 1; }
-LIBTOOL="`required_one libtool glibtool`"          || \
-    { echo "Missing tool: libtool"; exit 1; }
-LIBTOOLIZE="`required_one libtoolize glibtoolize`" || \
-    { echo "Missing tool: libtoolize"; exit 1; }
-GNULIBTOOL="`required gnulib-tool`"                || \
-    { echo "Missing tool: gnulib-tool"; exit 1; }
-GIT="`required git`"                               || \
-    { echo "Missing tool: git"; exit 1; }
-SED="`required sed`"                               || \
-    { echo "Missing tool: sed"; exit 1; }
-GUILE_TOOLS="`required guile-tools`"               || \
-    { echo "Missing tool: guile-tools"; exit 1; }
-PYTHON_AUTOFRISK="`required python-autofrisk`"     || \
-    { echo "Missing tool: python-autofrisk"; exit 1; }
-PERL_AUTOFRISK="`required perl-autofrisk`"         || \
-    { echo "Missing tool: perl-autofrisk"; exit 1; }
+DOT_BOOTSTRAP="`pwd`/.bootstrap"
+if test ! -r $DOT_BOOTSTRAP; then
+    echo "$ME: Missing file \`${DOT_BOOTSTRAP}'"
+    exit 1
+fi
+source $DOT_BOOTSTRAP
 
 #
 # Dump some useful informations
@@ -122,12 +103,6 @@ echo "$ME: Dumping build-tools information ..."
 for tool in                                     \
     $SED                                        \
     $GIT                                        \
-    $AUTOHEADER                                 \
-    $AUTOCONF                                   \
-    $LIBTOOL                                    \
-    $LIBTOOLIZE                                 \
-    $ACLOCAL                                    \
-    $AUTOMAKE                                   \
     $AUTORECONF                                 \
     $GNULIBTOOL                                 \
     $GUILE_TOOLS                                \
@@ -154,14 +129,18 @@ if test x"`$GIT tag -l 2>/dev/null | $SED -n '$='`" = x""; then
 fi
 
 #
-# Remove files left from the previous run
+# Build configure.ac from git configure.ac.in
 #
-echo "$ME: Removing autotools related files and directories ..."
-rm -f  `find ./ -name "Makefile.in"`                 || exit 1
-rm -f  config.cache aclocal.m4 config.h.in configure || exit 1
-rm -f  config.guess config.sub ltmain.sh             || exit 1
-rm -rf autom4te.cache                                || exit 1
-rm -rf `find ./ -name ".deps"`                       || exit 1
+echo "$ME: Building configure.ac from configure.ac.in"
+rm -f configure.ac
+VERSION=`git tag -l | sort -s -t '.' -k 1,1n -k 2,2n -k 3,3n | tail -n 1`
+cat configure.ac.in | \
+    sed -e 's,[@]VERSION[@],'$VERSION',' > configure.ac || {
+    echo "$ME: Problems building version stamp'"
+    rm -f configure.ac
+    exit 1
+}
+chmod a-w configure.ac
 
 #
 # Autofrisk modules
@@ -171,6 +150,7 @@ if test -e ./python.af ; then
     $PYTHON_AUTOFRISK ./python.af && \
         cat ./python.af.m4 > ./tools/autotools/m4/python-autofrisk-data.m4 && \
         rm -f ./python.af.m4 || {
+        echo "$ME: Problems during python-autofrisk run'"
         rm -f ./python.af.m4
         rm -f ./tools/autotools/m4/python-autofrisk-data.m4
         exit 1
@@ -181,6 +161,7 @@ if test -e ./perl.af ; then
     $PERL_AUTOFRISK ./perl.af && \
         cat ./perl.af.m4 > ./tools/autotools/m4/perl-autofrisk-data.m4 && \
         rm -f ./perl.af.m4 || {
+        echo "$ME: Problems during perl-autofrisk run'"
         rm -f ./perl.af.m4
         rm -f ./tools/autotools/m4/perl-autofrisk-data.m4
         exit 1
@@ -191,6 +172,7 @@ if test -e ./guile.af ; then
     $GUILE_TOOLS autofrisk ./guile.af && \
         cat ./guile.af.m4 | sed -e 's/AUTOFRISK_/GUILE_AUTOFRISK_/g' > ./tools/autotools/m4/guile-autofrisk-data.m4 && \
         rm -f ./guile.af.m4 || {
+        echo "$ME: Problems during guile-autofrisk run'"
         rm -f ./guile.af.m4
         rm -f ./tools/autotools/m4/guile-autofrisk-data.m4
         exit 1
@@ -198,19 +180,28 @@ if test -e ./guile.af ; then
 fi
 
 #
-# configure.ac
+# Gather AC_CONFIG_AUX_DIR directly from configure.ac
 #
-echo "$ME: Building configure.ac from configure.ac.in"
-rm -f configure.ac
-VERSION=`git tag -l | sort -s -t '.' -k 1,1n -k 2,2n -k 3,3n | tail -n 1`
-cat configure.ac.in | sed -e 's,[@]VERSION[@],'$VERSION',' > configure.ac || \
-    { rm -f configure.ac ; exit 1 ; }
-chmod a-w configure.ac
+AC_CONFIG_AUX_DIR=`cat configure.ac|grep AC_CONFIG_AUX_DIR|sed -e 's,^.*\[,,' | sed -e 's,\].*,,'`
+if test -z "$AC_CONFIG_AUX_DIR" ; then
+    echo "$ME: Cannot retrieve AC_CONFIG_AUX_DIR value from configure.ac"
+    exit 1
+fi
+
+#
+# Remove files left from the previous run
+#
+echo "$ME: Removing autotools related files and directories ..."
+rm -f  `find ./ -name "Makefile.in"`                 || exit 1
+rm -f  config.cache aclocal.m4 config.h.in configure || exit 1
+rm -f  config.guess config.sub                       || exit 1
+rm -f  libtool $AC_CONFIG_AUX_DIR/ltmain.sh          || exit 1
+rm -rf autom4te.cache                                || exit 1
+rm -rf `find ./ -name ".deps"`                       || exit 1
 
 #
 # Call gnulib
 #
-GNULIBMODULES="getopt-posix"
 if test -n "$GNULIBMODULES" ; then
     echo "$ME: Calling gnulib-tool (importing modules $GNULIBMODULES)"
     rm -r -f ./src/gnulib
@@ -222,7 +213,10 @@ if test -n "$GNULIBMODULES" ; then
         --aux-dir=./tools/autotools \
         --m4-base=./tools/autotools/m4 \
         --source-base=./src/gnulib \
-        --import $GNULIBMODULES || exit 1
+        --import $GNULIBMODULES || {
+        echo "$ME: Problems running gnulib-tool'"
+        exit 1
+    }
 fi
 
 #
@@ -230,21 +224,23 @@ fi
 #
 echo "$ME: Running autoreconf (autoreconf extra flags $AUTORECONF_FLAGS)..."
 $AUTORECONF \
-    --verbose \
     --force \
     --install \
     --warnings=all \
     $AUTORECONF_FLAGS || {
+    echo "$ME: Problems during auto-reconfiguration'"
     exit 1
 }
 
 #
 # bootstrap other packages
 #
-for i in $SUBDIRS
+for i in $BOOTSTRAPS
 do
-    (cd $i && ./bootstrap) || {
-        echo "$ME: Cannot bootstrap $i directory"
+    j=`dirname $i`
+    k=`basename $i`
+    (cd $j && if test -x $k ; then ./$k ; else sh ./$k ; fi) || {
+        echo "$ME: Cannot call $k inside $j directory"
         exit 1
     }
 done
