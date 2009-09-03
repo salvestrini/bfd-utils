@@ -12,12 +12,14 @@ Makefile
 /TODO
 /AUTHORS
 
+/.version
+/.tarball-version
+
 /TAGS
 /aclocal.m4
 /autom4te.cache
 
 /configure
-/configure.ac
 /config.log
 /config.status
 
