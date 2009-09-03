@@ -43,25 +43,7 @@ scripts =					\
 ##
 ## Maintainer related targets
 ##
-HOST = "http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f="
-
 update-local: Makefile
-	rm -r -f fetch-dir && \
-	mkdir fetch-dir && \
-	$(FETCH) $(HOST)build-aux/git-version-gen fetch-dir/git-version-gen && \
-	chmod a+rx fetch-dir/git-version-gen && \
-	chmod u+w  fetch-dir/git-version-gen && \
-	$(FETCH) $(HOST)build-aux/gitlog-to-changelog fetch-dir/gitlog-to-changelog && \
-	chmod a+rx fetch-dir/gitlog-to-changelog && \
-	chmod u+w  fetch-dir/gitlog-to-changelog && \
-	$(FETCH) $(HOST)build-aux/announce-gen fetch-dir/announce-gen && \
-	chmod a+rx fetch-dir/announce-gen && \
-	chmod u+w  fetch-dir/announce-gen && \
-	mv -f fetch-dir/* ./ || { \
-		rm -r -f fetch-dir ; \
-		exit 1 ; \
-	} && \
-	rm -r -f fetch-dir
 
 maintainer-check-parameters: Makefile $(scripts)
 	for i in $(scripts) ; do \
