@@ -28,6 +28,7 @@ do_subst_AUTOTOOLS = \
   -e 's,[@]PACKAGE_NAME[@],$(PACKAGE_NAME),g' \
   -e 's,[@]PACKAGE_BUGREPORT[@],$(PACKAGE_BUGREPORT),g' \
   -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' \
+  -e 's,[@]PACKAGE_URL[@],$(PACKAGE_URL),g' \
   -e 's,[@]PATH_SEPARATOR[@],$(PATH_SEPARATOR),g' \
   -e 's,[@]SHELL[@],$(SHELL),g' \
   \
