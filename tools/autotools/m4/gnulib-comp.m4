@@ -43,8 +43,6 @@ AC_DEFUN([GNULIB_INIT],
   m4_pushdef([GNULIB_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='./src/gnulib'
-  gl_FUNC_GETOPT_GNU
-  gl_MODULE_INDICATOR([getopt-gnu])
   gl_FUNC_GETOPT_POSIX
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
