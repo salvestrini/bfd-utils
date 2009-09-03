@@ -44,13 +44,20 @@ EXTRA_DIST =						\
 	TODO NEWS 					\
 	BUGS README COPYING AUTHORS INSTALL THANKS	\
 	bootstrap .bootstrap				\
-	configure.ac.in					\
 	perl.af						\
 	.todo .dnt.db
 
 ##
 ## Maintainer related targets
 ##
+
+BUILT_SOURCES = $(top_srcdir)/.version
+
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 
 MAINTAINERCLEANFILES =
 
@@ -169,23 +176,6 @@ announcement:
 site: all
 	(cd site && $(MAKE) $(AM_MAKEFLAGS) site)
 
-HOST = "http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=blob_plain;hb=HEAD;f="
-
-update-download:
-	rm -r -f fetch-dir && \
-	mkdir fetch-dir && \
-	$(FETCH) $(HOST)doc/INSTALL fetch-dir/INSTALL && \
-	chmod a+r fetch-dir/INSTALL && \
-	chmod u+w fetch-dir/INSTALL && \
-	$(FETCH) $(HOST)doc/COPYINGv2 fetch-dir/COPYING && \
-	chmod a+r fetch-dir/COPYING && \
-	chmod u+w fetch-dir/COPYING && \
-	mv -f fetch-dir/* ./ || { \
-		rm -r -f fetch-dir ; \
-		exit 1 ; \
-	} && \
-	rm -r -f fetch-dir
-
-update-local: Makefile update-download 
+update-local: Makefile
 
 maintainer-check-local: Makefile
