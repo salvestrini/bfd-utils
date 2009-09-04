@@ -26,8 +26,7 @@ SUBDIRS =					\
 	tools					\
 	src					\
 	tests					\
-	man					\
-	site
+	man
 
 ##
 ## NOTE:
@@ -172,9 +171,6 @@ announcement:
 	  --curr=$(PACKAGE_VERSION)		\
 	  --gpg-key-id=TEST			\
 	  --url-dir=TEST
-
-site: all
-	(cd site && $(MAKE) $(AM_MAKEFLAGS) site)
 
 update-local: Makefile
 

@@ -72,7 +72,6 @@ GNULIB_EARLY
 GNULIB_INIT
 
 AX_PATH_MISSING([HELP2MAN],    [help2man])
-AX_PATH_MISSING([SITETOOL],    [sitetool])
 AX_PATH_MISSING([WGET],        [wget])
 AX_PATH_MISSING([PERL],        [perl])
 
@@ -117,9 +116,6 @@ AC_CONFIG_FILES([
 	man/Makefile
 
 	tests/Makefile
-
-	site/Makefile
-	site/in/Makefile
 
 	tools/Makefile
 	tools/maint/Makefile
