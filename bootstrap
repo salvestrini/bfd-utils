@@ -199,11 +199,11 @@ GNULIBTOOL_FLAGS="
         --aux-dir=$GNULIBTOOL_AUXDIR
         --m4-base=./tools/autotools/m4
         --source-base=./src/gnulib
+        --makefile-name=Makefile.gnulib
 "
 
 if test -n "$GNULIB_MODULES" ; then
     log "Calling gnulib-tool (importing modules $GNULIB_MODULES)"
-    rm -r -f ./src/gnulib
     $GNULIBTOOL $GNULIBTOOL_FLAGS --import $GNULIB_MODULES || {
         log "Problems running gnulib-tool'"
         exit 1

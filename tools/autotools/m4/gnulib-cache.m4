@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=./src/gnulib --m4-base=./tools/autotools/m4 --doc-base=doc --tests-base=tests --aux-dir=./tools/maint --lgpl --no-libtool --macro-prefix=GNULIB --no-vc-files getopt-posix
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=./src/gnulib --m4-base=./tools/autotools/m4 --doc-base=doc --tests-base=tests --aux-dir=./tools/maint --lgpl --makefile-name=Makefile.gnulib --no-libtool --macro-prefix=GNULIB --no-vc-files getopt-posix
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -30,7 +30,7 @@ gl_DOC_BASE([doc])
 gl_TESTS_BASE([tests])
 gl_LIB([libgnu])
 gl_LGPL
-gl_MAKEFILE_NAME([])
+gl_MAKEFILE_NAME([Makefile.gnulib])
 gl_MACRO_PREFIX([GNULIB])
 gl_PO_DOMAIN([])
 gl_VC_FILES([false])
