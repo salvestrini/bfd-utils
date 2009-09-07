@@ -29,7 +29,7 @@ fmt='
         n=%(*authorname)
         e=%(*authoremail)
         s=%(*subject)
-        d=%(*authordate)
+        d=%(*authordate:short)
         b=%(*body)
 
         if test "z$t" = z
@@ -46,6 +46,6 @@ fmt='
 	echo "$T $d"
 '
 
-eval=`git for-each-ref --shell --format="$fmt" --sort=authordate refs/tags`
+eval=`git for-each-ref --shell --format="$fmt" --sort=*authordate refs/tags`
 
 eval "$eval"
