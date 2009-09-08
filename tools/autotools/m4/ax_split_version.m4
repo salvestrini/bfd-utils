@@ -4,13 +4,13 @@
 #
 # SYNOPSIS
 #
-#   AX_SPLIT_VERSION
+#   AX_SPLIT_VERSION(VERSION, MAJOR, MINOR, MICRO, EXTRA)
 #
 # DESCRIPTION
 #
-#   Splits a version number in the format MAJOR.MINOR.MICRO-EXTRA into its
-#   separate components. MAJOR, MINOR and MICRO are recognized as numbers
-#   while EXTRA could be whatever.
+#   Splits a version number in the format MAJOR[.MINOR[.MICRO]][-EXTRA] into its
+#   separeate components. Fills MAJOR, MINOR, MICRO and EXTRA variables.
+#   Does not AC_SUBST the passed variables.
 #
 # LICENSE
 #
@@ -26,37 +26,11 @@ AC_DEFUN([AX_SPLIT_VERSION],[
     AC_REQUIRE([AC_PROG_SED])
 
     AC_MSG_CHECKING([version])
-    AC_MSG_RESULT([$VERSION])
 
-    AC_MSG_CHECKING([major version])
-    AX_MAJOR_VERSION=`echo "$VERSION" | $SED -n -e 's/^\([[0-9]][[0-9A-Za-z]]*\)\(\.[[0-9]][[0-9A-Za-z]]*\)\?\(\.[[0-9]][[0-9A-Za-z]]*\)\?\(\-[[0-9A-Za-z]][[0-9A-Za-z_]]*\)\?$/\1/p;'`
-    AS_IF([test -z $AX_MAJOR_VERSION],[
-        AC_MSG_RESULT([unknown])
-    ],[
-        AC_MSG_RESULT([$AX_MAJOR_VERSION])
-    ])
+    $2=`echo "$1" | $SED -n -e 's/^\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+    $3=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+    $4=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+    $5=`echo "$1" | $SED -n -e 's/^.*\-\([[^\-]][[^\-]]*\)$/\1/p;'`
 
-    AC_MSG_CHECKING([minor version])
-    AX_MINOR_VERSION=`echo "$VERSION" | $SED -n -e 's/^\([[0-9]][[0-9A-Za-z]]*\)\(\.\([[0-9]][[0-9A-Za-z]]*\)\)\(\.[[0-9]][[0-9A-Za-z]]*\)\?\(\-[[0-9A-Za-z]][[0-9A-Za-z_]]*\)\?$/\3/p;'`
-    AS_IF([test -z $AX_MINOR_VERSION],[
-        AC_MSG_RESULT([unknown])
-    ],[
-        AC_MSG_RESULT([$AX_MINOR_VERSION])
-    ])
-
-    AC_MSG_CHECKING([micro version])
-    AX_MICRO_VERSION=`echo "$VERSION" | $SED -n -e 's/^\([[0-9]][[0-9A-Za-z]]*\)\(\.[[0-9]][[0-9A-Za-z]]*\)\(\.\([[0-9]][[0-9A-Za-z]]*\)\)\(\-[[0-9A-Za-z]][[0-9A-Za-z_]]*\)\?$/\4/p;'`
-    AS_IF([test -z $AX_MICRO_VERSION],[
-        AC_MSG_RESULT([unknown])
-    ],[
-        AC_MSG_RESULT([$AX_MICRO_VERSION])
-    ])
-
-    AC_MSG_CHECKING([extra version])
-    AX_EXTRA_VERSION=`echo "$VERSION" | $SED -n -e 's/^\([[0-9A-Za-z]][[0-9A-Za-z]]*\)\(\.[[0-9A-Za-z]][[0-9A-Za-z]]*\)\?\(\.[[0-9A-Za-z]][[0-9A-Za-z]]*\)\?\(\-\([[0-9A-Za-z]][[0-9A-Za-z_]]*\)\)$/\5/p;'`
-    AS_IF([test -z $AX_EXTRA_VERSION],[
-        AC_MSG_RESULT([unknown])
-    ],[
-        AC_MSG_RESULT([$AX_EXTRA_VERSION])
-    ])
+    AC_MSG_RESULT([$1 (major=']$$2[', minor=']$$3[', micro=']$$4[', extra=']$$5[')])
 ])
