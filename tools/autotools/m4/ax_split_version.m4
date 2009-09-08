@@ -4,13 +4,14 @@
 #
 # SYNOPSIS
 #
-#   AX_SPLIT_VERSION(VERSION, MAJOR, MINOR, MICRO, EXTRA)
+#   AX_SPLIT_VERSION(VERSION, [MAJOR, [MINOR, [MICRO, [EXTRA]]]])
 #
 # DESCRIPTION
 #
 #   Splits a version number in the format MAJOR[.MINOR[.MICRO]][-EXTRA] into its
-#   separeate components. Fills MAJOR, MINOR, MICRO and EXTRA variables.
+#   separate components. Fills MAJOR, MINOR, MICRO and EXTRA variables.
 #   Does not AC_SUBST the passed variables.
+#
 #
 # LICENSE
 #
@@ -26,11 +27,29 @@ AC_DEFUN([AX_SPLIT_VERSION],[
     AC_REQUIRE([AC_PROG_SED])
 
     AC_MSG_CHECKING([version])
+    AC_MSG_RESULT([$1])
 
-    $2=`echo "$1" | $SED -n -e 's/^\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
-    $3=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
-    $4=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
-    $5=`echo "$1" | $SED -n -e 's/^.*\-\([[^\-]][[^\-]]*\)$/\1/p;'`
-
-    AC_MSG_RESULT([$1 (major=']$$2[', minor=']$$3[', micro=']$$4[', extra=']$$5[')])
+    AS_IF([test -n "$2"],[
+        AC_MSG_CHECKING([major])
+        $2=`echo "$1" | $SED -n -e 's/^\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+        AC_MSG_RESULT(['][$$2]['])
+    ])
+    AS_IF([test -n "$3"],[
+        AC_MSG_CHECKING([minor])
+        $3=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+        ax_split_version_temp="$ax_split_version_temp minor='][$$3]['"
+        AC_MSG_RESULT(['][$$3]['])
+    ])
+    AS_IF([test -n "$4"],[
+        AC_MSG_CHECKING([micro])
+        $4=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\.[[^\.\-]][[^\.\-]]*\.\([[^\.\-]][[^\.\-]]*\).*$/\1/p;'`
+        ax_split_version_temp="$ax_split_version_temp micro='][$$4]['"
+        AC_MSG_RESULT(['][$$4]['])
+    ])
+    AS_IF([test -n "$5"],[
+        AC_MSG_CHECKING([extra])
+        $5=`echo "$1" | $SED -n -e 's/^.*\-\([[^\-]][[^\-]]*\)$/\1/p;'`
+        ax_split_version_temp="$ax_split_version_temp extra='][$$5]['"
+        AC_MSG_RESULT(['][$$5]['])
+    ])
 ])
