@@ -12,6 +12,18 @@
 #   separate components. Fills MAJOR, MINOR, MICRO and EXTRA variables.
 #   Does not AC_SUBST the passed variables.
 #
+#   Examples:
+#
+#     AX_SPLIT_VERSION("1",[MAJOR])
+#     AX_SPLIT_VERSION("1-a",[MAJOR],,,[EXTRA])
+#     AX_SPLIT_VERSION("1.2",[MAJOR],[MINOR])
+#     AX_SPLIT_VERSION("1.2.3",[MAJOR],,[MICRO])
+#     AX_SPLIT_VERSION("1.2-alfa",[MAJOR],[MINOR],,[EXTRA])
+#     AX_SPLIT_VERSION("1.33.4444",[MAJOR],[MINOR],[MICRO])
+#     AX_SPLIT_VERSION("12.44.333111-alfa",[MAJOR])
+#     AX_SPLIT_VERSION("12.44.333111-alfa",,[MINOR])
+#     AX_SPLIT_VERSION("12.44.333111-alfa",,,[MICRO])
+#     AX_SPLIT_VERSION("12.44.333111-alfa",,,,[EXTRA])
 #
 # LICENSE
 #
