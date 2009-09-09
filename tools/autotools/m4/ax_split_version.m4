@@ -60,7 +60,7 @@ AC_DEFUN([AX_SPLIT_VERSION],[
     ])
     AS_IF([test -n "$5"],[
         AC_MSG_CHECKING([extra])
-        $5=`echo "$1" | $SED -n -e 's/^.*\-\([[^\-]][[^\-]]*\)$/\1/p;'`
+        $5=`echo "$1" | $SED -n -e 's/^[[^\.\-]][[^\.\-]]*\(\.[[^\.\-]][[^\.\-]]*\)\?\(\.[[^\.\-]][[^\.\-]]*\)\?\-\(.*\)$/\3/p;'`
         ax_split_version_temp="$ax_split_version_temp extra='][$$5]['"
         AC_MSG_RESULT(['][$$5]['])
     ])
