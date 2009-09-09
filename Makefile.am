@@ -20,7 +20,7 @@
 
 include $(top_srcdir)/Makefile.sub
 
-ACLOCAL_AMFLAGS = -I tools/autotools/m4
+ACLOCAL_AMFLAGS = -I tools/autotools/m4 --install
 
 SUBDIRS =					\
 	tools					\
@@ -39,11 +39,11 @@ AUTOMAKE_OPTIONS = check-news
 ## NOTE:
 ##     Makefile.sub is automatically distributed by automake rules
 ##
-EXTRA_DIST =						\
-	TODO NEWS 					\
-	BUGS README COPYING AUTHORS INSTALL THANKS	\
-	bootstrap .bootstrap				\
-	perl.af						\
+EXTRA_DIST =					\
+	TODO NEWS				\
+	README COPYING AUTHORS INSTALL THANKS	\
+	bootstrap .bootstrap			\
+	perl.af					\
 	.todo .dnt.db
 
 ##
