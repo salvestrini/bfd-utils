@@ -21,11 +21,6 @@
 include $(top_srcdir)/Makefile.sub
 
 EXTRA_DIST =					\
-	fetch.in				\
-	whitespace-detect.in			\
-	gitlog-to-committers.in			\
-	gittag-to-date.in			\
-						\
 	git-version-gen				\
 	gitlog-to-changelog			\
 	announce-gen
@@ -35,25 +30,31 @@ scripts =					\
 	whitespace-detect			\
 	gitlog-to-committers			\
 	gittag-to-date				\
-						\
-	git-version-gen				\
-	gitlog-to-changelog			\
-	announce-gen
+	$(EXTRA_DIST)
 
 ##
 ## Maintainer related targets
 ##
-update-local: Makefile
+URL_BU = "http://github.com/salvestrini/build-utils/tree/master/maint"
 
-maintainer-check-parameters: Makefile $(scripts)
-	for i in $(scripts) ; do \
-		echo @ECHO_N@ "Checking standard parameters for $$i... " ; \
-		if ( ./$$i -h 2>&1 > /dev/null ) ; then \
-			echo "@ECHO_T@ok" ; \
-		else \
-			echo "@ECHO_T@error" ; \
-			exit 1 ; \
-		fi ; \
-	done
+EXTERNAL =                                      \
+        $(URL_BU)/fetch.in                      \
+        $(URL_BU)/whitespace-detect.in          \
+        $(URL_BU)/gitlog-to-committers.in       \
+        $(URL_BU)/gittag-to-date.in
+
+update-local: Makefile
+	rm -r -f fetch-dir && \
+	mkdir fetch-dir && \
+	for i in $(EXTERNAL) ; do \
+	        URL="$$i" ; \
+	        NAME=`echo "$$i" | $(SED) -e 's,^.*/,,'` ; \
+	        $(FETCH) $$URL?raw=true fetch-dir/$$NAME && \
+	        mv fetch-dir/$$NAME $$NAME || { \
+	                rm -f fetch-dir/$$NAME ; \
+	                exit 1 ; \
+	        } \
+	done && \
+	rm -r -f fetch-dir
 
 maintainer-check-local: Makefile maintainer-check-parameters
