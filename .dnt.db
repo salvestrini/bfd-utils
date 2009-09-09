@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <root><entry priority="veryhigh" start="1241018717">
         Release 0.1.0
-        <entry priority="high" start="1245427328">
+        <entry priority="veryhigh" start="1252443513">
+            Rearrange the build-related code (macros, makefiles, bootstrap, gnulib-use)
+        </entry>
+    <entry priority="high" start="1245427328">
             Complete bfd-section-mv
         </entry>
     <entry priority="high" start="1245427332">
