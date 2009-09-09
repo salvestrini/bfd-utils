@@ -72,7 +72,7 @@ void callback(bfd * abfd, asection * sect, void * obj)
                 message("\n");
         }
 
-        xfree(symbol_table);
+        free(symbol_table);
 }
 
 void help(void)

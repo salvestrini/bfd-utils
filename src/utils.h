@@ -34,7 +34,6 @@ void   hint(const char * program_name,
             const char * message);
 
 void * xmalloc(size_t size);
-void   xfree(void * p);
 char * xstrdup(const char * s);
 
 #define max(A,B) ((A >= B) ? A : B)

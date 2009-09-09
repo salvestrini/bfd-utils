@@ -128,13 +128,6 @@ void * xmalloc(size_t size)
         return tmp;
 }
 
-void xfree(void * pointer)
-{
-        BUG_ON(pointer == NULL);
-
-        free(pointer);
-}
-
 char * xstrdup(const char * s)
 {
         char * tmp;

@@ -209,8 +209,8 @@ void clear(void)
                 BUG_ON(tmp->name == NULL);
 
                 debug("Removing entry `%s'\n", tmp->name);
-                xfree(tmp->name);
-                xfree(tmp);
+                free(tmp->name);
+                free(tmp);
         }
 }
 
