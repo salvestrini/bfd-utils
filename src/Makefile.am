@@ -24,7 +24,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 SUBDIRS = gnulib
 
-EXTRA_DIST =
+EXTRA_DIST     =
+
+COMMON_CPPFLAGS =
+COMMON_CFLAGS   = -I $(srcdir)/gnulib
 
 ## Programs
 
@@ -44,7 +47,9 @@ bfd_section_stat_SOURCES =			\
 	bfd-section-stat.c
 bfd_section_stat_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="bfd-section-stat"'	\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
+bfd_section_stat_CFLAGS =			\
+	$(COMMON_CFLAGS)
 bfd_section_stat_LDADD =			\
 	$(common_LDADD)				\
 	-lm
@@ -53,7 +58,9 @@ bfd_section_ls_SOURCES =			\
 	bfd-section-ls.c
 bfd_section_ls_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="bfd-section-ls"'	\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
+bfd_section_ls_CFLAGS =				\
+	$(COMMON_CFLAGS)
 bfd_section_ls_LDADD =				\
 	$(common_LDADD)				\
 	-lm
@@ -62,7 +69,9 @@ bfd_section_mv_SOURCES =			\
 	bfd-section-mv.c
 bfd_section_mv_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="bfd-section-mv"'	\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
+bfd_section_mv_CFLAGS =				\
+	$(COMMON_CFLAGS)
 bfd_section_mv_LDADD =				\
 	$(common_LDADD)
 
@@ -70,7 +79,9 @@ bfd_section_remangle_SOURCES =			\
 	bfd-section-remangle.c
 bfd_section_remangle_CPPFLAGS =				\
 	-D 'PROGRAM_NAME="bfd-section-remangle"'	\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
+bfd_section_remangle_CFLAGS =			\
+	$(COMMON_CFLAGS)
 bfd_section_remangle_LDADD =			\
 	$(common_LDADD)
 
@@ -78,7 +89,9 @@ bfd_section_symbols_SOURCES =			\
 	bfd-section-symbols.c
 bfd_section_symbols_CPPFLAGS =			\
 	-D 'PROGRAM_NAME="bfd-section-symbols"'	\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
+bfd_section_symbols_CFLAGS =			\
+	$(COMMON_CFLAGS)
 bfd_section_symbols_LDADD =			\
 	$(common_LDADD)
 
@@ -93,8 +106,10 @@ libcommon_a_SOURCES =				\
 	log.h					\
 	utils.c					\
 	utils.h
+libcommon_a_CFLAGS =				\
+	$(COMMON_CFLAGS)
 libcommon_a_CPPFLAGS =				\
-	$(EXTRA_CPPFLAGS)
+	$(COMMON_CPPFLAGS)
 
 ##
 ## Maintainer related targets
