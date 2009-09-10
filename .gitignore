@@ -23,6 +23,7 @@ Makefile
 /config.log
 /config.status
 
+/src/config.h
 /src/bfd-section-ls
 /src/bfd-section-mv
 /src/bfd-section-stat
