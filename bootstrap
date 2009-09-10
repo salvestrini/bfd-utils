@@ -186,13 +186,13 @@ rm -f  config.guess config.sub                       || exit 1
 rm -f  libtool $AC_CONFIG_AUX_DIR/ltmain.sh          || exit 1
 rm -rf autom4te.cache                                || exit 1
 rm -rf `find ./ -name ".deps"`                       || exit 1
+rm -f  `find ./ -name "gnulib-cache.m4"`             || exit 1
 
 #
 # Call gnulib
 #
 GNULIBTOOL_AUXDIR=./tools/maint
 GNULIBTOOL_FLAGS="
-        --lgpl
         --no-changelog
         --macro-prefix GNULIB
         --no-vc-files
@@ -240,7 +240,7 @@ done
 #
 # autoreconf
 #
-log "Running autoreconf (autoreconf extra flags $AUTORECONF_FLAGS)..."
+log "Running autoreconf (autoreconf extra flags \`$AUTORECONF_FLAGS')..."
 $AUTORECONF \
     --force \
     --install \
