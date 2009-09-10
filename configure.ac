@@ -33,6 +33,7 @@ AC_PREREQ([2.64])
 AC_CONFIG_AUX_DIR([tools/autotools])
 AC_CONFIG_MACRO_DIR([tools/autotools/m4])
 AC_CONFIG_SRCDIR([src/bfd-section-stat.c])
+AC_CONFIG_HEADERS([src/config.h])
 
 #
 # For automake options (AM_INIT_AUTOMAKE options) see Makefile.am
