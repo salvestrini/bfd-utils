@@ -43,11 +43,35 @@ AC_DEFUN([GNULIB_INIT],
   m4_pushdef([GNULIB_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='./src/gnulib'
+  gl_HEADER_ERRNO_H
+  gl_ERROR
+  m4_ifdef([AM_XGETTEXT_OPTION],
+    [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
+     AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  gl_EXITFAIL
   gl_FUNC_GETOPT_POSIX
+  gl_FUNC_GETPAGESIZE
+  gl_UNISTD_MODULE_INDICATOR([getpagesize])
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  gl_INLINE
+  gl_FUNC_MEMCHR
+  gl_STRING_MODULE_INDICATOR([memchr])
+  gl_MULTIARCH
   gl_STDDEF_H
+  gl_STDINT_H
+  gl_STDLIB_H
+  gl_FUNC_STRERROR
+  gl_STRING_MODULE_INDICATOR([strerror])
+  gl_HEADER_STRING_H
+  gl_FUNC_STRNDUP
+  gl_STRING_MODULE_INDICATOR([strndup])
+  gl_FUNC_STRNLEN
+  gl_STRING_MODULE_INDICATOR([strnlen])
   gl_UNISTD_H
+  gl_WCHAR_H
+  gl_XALLOC
+  gl_XSTRNDUP
   m4_ifval(GNULIB_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([GNULIB_LIBSOURCES_DIR])[ ||
       for gl_file in ]GNULIB_LIBSOURCES_LIST[ ; do
@@ -181,20 +205,59 @@ AC_DEFUN([GNULIBtests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([GNULIB_FILE_LIST], [
   build-aux/link-warning.h
-  lib/dummy.c
+  lib/errno.in.h
+  lib/error.c
+  lib/error.h
+  lib/exitfail.c
+  lib/exitfail.h
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
   lib/getopt_int.h
+  lib/getpagesize.c
   lib/gettext.h
+  lib/intprops.h
+  lib/memchr.c
+  lib/memchr.valgrind
   lib/stddef.in.h
+  lib/stdint.in.h
+  lib/stdlib.in.h
+  lib/strerror.c
+  lib/string.in.h
+  lib/strndup.c
+  lib/strnlen.c
   lib/unistd.in.h
+  lib/wchar.in.h
+  lib/xalloc-die.c
+  lib/xalloc.h
+  lib/xmalloc.c
+  lib/xstrndup.c
+  lib/xstrndup.h
   m4/00gnulib.m4
+  m4/errno_h.m4
+  m4/error.m4
+  m4/exitfail.m4
   m4/extensions.m4
   m4/getopt.m4
+  m4/getpagesize.m4
   m4/gnulib-common.m4
   m4/include_next.m4
+  m4/inline.m4
+  m4/longlong.m4
+  m4/memchr.m4
+  m4/mmap-anon.m4
+  m4/multiarch.m4
   m4/stddef_h.m4
+  m4/stdint.m4
+  m4/stdlib_h.m4
+  m4/strerror.m4
+  m4/string_h.m4
+  m4/strndup.m4
+  m4/strnlen.m4
   m4/unistd_h.m4
+  m4/wchar.m4
   m4/wchar_t.m4
+  m4/wint_t.m4
+  m4/xalloc.m4
+  m4/xstrndup.m4
 ])
