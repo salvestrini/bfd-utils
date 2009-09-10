@@ -34,7 +34,7 @@ EXTERNAL =					\
 	$(URL_AA)/ax_with_prog.m4
 
 INTERNAL =					\
-	ax_prog_devtodo_version.m4
+	gnulib-cache.m4
 
 MACROS =					\
 	$(INTERNAL)				\
