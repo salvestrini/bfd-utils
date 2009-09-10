@@ -33,8 +33,10 @@ void   version(const char * program_name);
 void   hint(const char * program_name,
             const char * message);
 
+#if 0
 void * xmalloc(size_t size);
 char * xstrdup(const char * s);
+#endif
 
 #define max(A,B) ((A >= B) ? A : B)
 
