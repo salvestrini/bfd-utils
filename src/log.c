@@ -17,10 +17,14 @@
  *
  */
 
+#include "config.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+
+#include "xalloc.h"
 
 #include "debug.h"
 #include "log.h"

@@ -17,6 +17,8 @@
  *
  */
 
+#include "config.h"
+
 #include <bfd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -113,6 +115,7 @@ void hint(const char * program_name,
         message("Try `%s --help' for more information.\n", program_name);
 }
 
+#if 0
 void * xmalloc(size_t size)
 {
         void * tmp;
@@ -142,3 +145,4 @@ char * xstrdup(const char * s)
 
         return tmp;
 }
+#endif
