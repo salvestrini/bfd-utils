@@ -6,6 +6,6 @@ PERL_AUTOFRISK="`required perl-autofrisk`"         || \
     { echo "Missing tool: perl-autofrisk"; exit 1; }
 
 BOOTSTRAPS=""
-GNULIB_MODULES="getopt-posix"
+GNULIB_MODULES="getopt-posix xalloc xstrndup"
 GNULIB_DOC="INSTALL COPYINGv2"
 GNULIB_BUILDAUX="git-version-gen gitlog-to-changelog announce-gen"
