@@ -72,12 +72,13 @@ AC_CHECK_LIB(m,log10,[],[
 GNULIB_EARLY
 GNULIB_INIT
 
-AX_PATH_MISSING([HELP2MAN],    [help2man])
-AX_PATH_MISSING([WGET],        [wget])
-AX_PATH_MISSING([PERL],        [perl])
-
-AC_PATH_PROG([DNT],            [dnt])
-AC_PATH_PROG([DEVTODO_TO_DNT], [devtodo-to-dnt])
+#
+# Build related programs
+#
+AX_PATH_MISSING([PERL],     [perl])
+AX_PATH_MISSING([HELP2MAN], [help2man])
+AX_PATH_MISSING([WGET],     [wget])
+AX_PATH_MISSING([DNT],      [dnt])
 
 AX_SPLIT_VERSION($PACKAGE_VERSION, AX_MAJOR_VERSION, AX_MINOR_VERSION, AX_MICRO_VERSION, AX_EXTRA_VERSION)
 #
