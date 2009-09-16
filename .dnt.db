@@ -1,26 +1,28 @@
-<?xml version="1.0"?>
-<root><entry priority="veryhigh" start="1241018717">
-        Release 0.1.0
-        <entry priority="veryhigh" start="1252443513">
-            Rearrange the build-related code (macros, makefiles, bootstrap, gnulib-use)
-        </entry>
-    <entry priority="high" start="1245427328">
-            Complete bfd-section-mv
-        </entry>
-    <entry priority="high" start="1245427332">
-            Complete bfd-section-remangle
-        </entry>
-    </entry>
-    <entry priority="high" start="1241018720">
-        Release 0.2.0
-    </entry>
-    <entry priority="medium" start="1241018725">
-        Release 0.3.0
-    </entry>
-    <entry priority="low" start="1243950855">
-        Release 0.4.0
-        <entry priority="medium" start="1244669263">
-            Fix bootstrap in order to exit when a missing program is called
-        </entry>
-    </entry>
-    </root>
+<?xml version="1.0" ?>
+<root>
+	Default DB name
+	<entry priority="veryhigh" start="1241018717">
+		Release 0.1.0
+		<entry priority="veryhigh" start="1252443513">
+			Rearrange the build-related code (macros, makefiles, bootstrap, gnulib-use)
+		</entry>
+		<entry priority="high" start="1245427328">
+			Complete bfd-section-mv
+		</entry>
+		<entry priority="high" start="1245427332">
+			Complete bfd-section-remangle
+		</entry>
+	</entry>
+	<entry priority="high" start="1241018720">
+		Release 0.2.0
+	</entry>
+	<entry priority="medium" start="1241018725">
+		Release 0.3.0
+	</entry>
+	<entry priority="low" start="1243950855">
+		Release 0.4.0
+		<entry priority="medium" start="1244669263">
+			Fix bootstrap in order to exit when a missing program is called
+		</entry>
+	</entry>
+</root>
