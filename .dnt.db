@@ -12,6 +12,21 @@
 		<entry priority="high" start="1245427332">
 			Complete bfd-section-remangle
 		</entry>
+		<entry priority="high" start="1253138522">
+			Update build
+			<entry priority="high" start="1253138522">
+				Fix package version in order to handle git versioning
+			</entry>
+			<entry priority="high" start="1253138523">
+				Move internal macros to build-utils package
+			</entry>
+			<entry priority="high" start="1253138523">
+				Create AX_PACKAGE_API macro
+				<entry priority="high" start="1253138523">
+					Update configure.ac replacing API-handling with AX_PACKAGE_API
+				</entry>
+			</entry>
+		</entry>
 	</entry>
 	<entry priority="high" start="1241018720">
 		Release 0.2.0
