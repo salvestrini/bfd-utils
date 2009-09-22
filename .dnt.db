@@ -17,7 +17,7 @@
 			<entry priority="high" start="1253138522">
 				Fix package version in order to handle git versioning
 			</entry>
-			<entry priority="high" start="1253138523">
+			<entry end="1253650415" priority="high" start="1253138523">
 				Move internal macros to build-utils package
 			</entry>
 			<entry priority="high" start="1253138523">
