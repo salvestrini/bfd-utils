@@ -67,6 +67,7 @@ GITLOG_TO_COMMITTERS = $(top_builddir)/tools/maint/gitlog-to-committers
 GITLOG_TO_CHANGELOG  = $(top_srcdir)/tools/maint/gitlog-to-changelog
 GIT_VERSION_GEN      = $(top_srcdir)/tools/maint/git-version-gen
 ANNOUNCE_GEN         = $(top_srcdir)/tools/maint/announce-gen
+GUARDS_CHECK         = $(top_srcdir)/tools/maint/guards-check
 
 ##
 ## Maintainer related targets
