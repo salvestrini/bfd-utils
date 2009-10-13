@@ -185,17 +185,17 @@ sub usage ($)
 	print $STREAM <<EOF;
 Usage: $ME [OPTIONS]
 
-Check headers guard correctness
+    Check headers guard correctness
 
 OPTIONS:
 
-  -p, --path=PATH    specify a search path for input files
-  -r, --report       print a summary report (guard based)
-  -f, --fatal        all warnings become fatal
-  -v, --verbose      enable verbose output
-  -d, --debug        enable debugging
-  -h, --help         display this help and exit
-      --version      output version information and exit
+    -p, --path=PATH    specify a search path for input files
+    -r, --report       print a summary report (guard based)
+    -f, --fatal        all warnings become fatal
+    -v, --verbose      enable verbose output
+    -d, --debug        enable debugging
+    -h, --help         display this help and exit
+    --version      output version information and exit
 
 Place input files at last, using -- as separator.
 
@@ -438,8 +438,8 @@ sub guard_count($$$)
 
 	    if ($guard_ref_ref->{$filename} ne "") {
 		$guard_ref_ref->{$filename} = $guard_curr .
-					       " "         .
-					       $guard_ref_ref->{$filename};
+                    " "         .
+                    $guard_ref_ref->{$filename};
 	    } else {
 		$guard_ref_ref->{$filename} = $guard_curr;
 	    }
@@ -611,23 +611,41 @@ sub guard_retrieve ($$$)
 	'v|verbose' => sub { verbose_set 1 },
 	'd|debug'   => sub { debug_set 1 },
 	'h|help'    => sub { usage 0 },
-	'version'   => sub { print "$ME ($PACKAGE_NAME) $VERSION\n"; exit(0); },
+	'version'   => sub { print "$ME ($PACKAGE_NAME) $VERSION\n";exit(0); },
 	) or usage 1;
 
-    debug("PASS 1: Checking input files existance");
+    debug("PASS 1: Filter-out files by extension");
+
+    my @tmpfiles;
+
+    for my $l (0..$#ARGV) {
+	my $infile = $ARGV[$l];
+
+        if (!(($infile =~ /^.*\.h$/)     ||
+              ($infile =~ /^.*\.h\+\+$/) ||
+              ($infile =~ /^.*\.hpp$/)   ||
+              ($infile =~ /^.*\.hxx$/))) {
+            warning("Unrecognized extension for \`$infile', skipping ...\n");
+            next;
+        }
+
+        push(@tmpfiles, $infile);
+    }
+
+    debug("PASS 2: Checking input files existance");
 
     my @infiles;
 
-    for my $i (0..$#ARGV) {
-	my $infile = $ARGV[$i];
+    for my $i (0..$#tmpfiles) {
+	my $infile = $tmpfiles[$i];
 	my $wrong  = 1;
 
 	for my $k (0..$#path) {
-	    my $infile = $path[$k] . "/" . $infile;
+	    my $tmpfile = $path[$k] . "/" . $infile;
 
-	    (! -r $infile) and next;
+            (! -r $tmpfile) and next;
 
-	    push(@infiles, $infile);
+	    push(@infiles, $tmpfile);
 	    $wrong = 0;
 	    last;
 	}
@@ -646,11 +664,10 @@ sub guard_retrieve ($$$)
 	hint("Missing input file(s)");
     }
 
-    debug("PASS 2: Retrieving guard and reference list from input files");
+    debug("PASS 3: Retrieving guard and reference list from input files");
 
-    for my $i (0..$#infiles) {
-
-	if (!guard_retrieve($infiles[$i], \%guard_lst, \%guard_ref)) {
+    for my $n (0..$#infiles) {
+	if (!guard_retrieve($infiles[$n], \%guard_lst, \%guard_ref)) {
 	    exit(1);
 	}
     }
@@ -660,7 +677,7 @@ sub guard_retrieve ($$$)
 	exit(0);
     }
 
-    debug("PASS 3: Counting guards from input files");
+    debug("PASS 4: Counting guards from input files");
 
     for my $j (0..$#infiles) {
 
@@ -669,14 +686,14 @@ sub guard_retrieve ($$$)
 	}
     }
 
-    debug("PASS 4: Checking guard uniqueness");
+    debug("PASS 5: Checking guard uniqueness");
 
     if (!guard_check(\%guard_lst, \%guard_ref)) {
 	exit(1);
     }
 
     if ($guard_rep == 1) {
-	debug("PASS 5: Produce summary report");
+	debug("PASS 6: Produce summary report");
 
 	if (!guard_report(\%guard_lst, \%guard_ref)) {
 	    exit(1);
