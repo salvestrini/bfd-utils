@@ -60,7 +60,7 @@ test -z "$VERBOSE" && {
 
 # The following definitions are needed in some tests ...
 PACKAGE="@PACKAGE@"
-API_VERSION="@API_VERSION@"
+PACKAGE_API="@PACKAGE_API@"
 
 # Make sure we override the user shell.
 SHELL='@SHELL@'

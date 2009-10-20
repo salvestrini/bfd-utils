@@ -42,7 +42,7 @@ do_subst_GENERIC = \
   -e 's,[@]configure_input[@],Generated from $@.in; do not edit by hand.,g' \
   -e 's,[@]makefile_input[@],Generated from $@.am; do not edit by hand.,g' \
   -e 's,[@]VERSION[@],$(VERSION),g' \
-  -e 's,[@]API_VERSION[@],$(API_VERSION),g' \
+  -e 's,[@]PACKAGE_API[@],$(PACKAGE_API),g' \
   -e 's,[@]pkgvbindir[@],$(pkgvbindir),g' \
   -e 's,[@]pkgvlibsdir[@],$(pkgvlibsdir),g' \
   -e 's,[@]pkgvdatadir[@],$(pkgvdatadir),g'
