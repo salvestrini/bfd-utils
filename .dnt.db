@@ -3,7 +3,7 @@
 	Default DB name
 	<entry priority="veryhigh" start="1241018717">
 		Release 0.1.0
-		<entry priority="veryhigh" start="1252443513">
+		<entry end="1256060079" priority="veryhigh" start="1252443513">
 			Rearrange the build-related code (macros, makefiles, bootstrap, gnulib-use)
 		</entry>
 		<entry priority="high" start="1245427328">
@@ -14,7 +14,7 @@
 		</entry>
 		<entry priority="high" start="1253138522">
 			Update build
-			<entry priority="high" start="1253138522">
+			<entry end="1256060085" priority="high" start="1253138522">
 				Fix package version in order to handle git versioning
 			</entry>
 			<entry end="1253650415" priority="high" start="1253138523">
