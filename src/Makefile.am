@@ -118,9 +118,10 @@ update-local: Makefile
 
 all_SRCS =					\
 	$(bfd_section_stat_SOURCES)		\
-	$(bfd_section_remangle_SOURCES)		\
 	$(bfd_section_ls_SOURCES)		\
-	$(bfd_section_mv_SOURCES)
+	$(bfd_section_mv_SOURCES)		\
+	$(bfd_section_remangle_SOURCES)		\
+	$(bfd_section_symbols_SOURCES)
 
 maintainer-check-parameters: Makefile $(bin_PROGRAMS)
 	for i in $(bin_PROGRAMS) ; do \
