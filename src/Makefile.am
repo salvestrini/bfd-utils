@@ -117,6 +117,7 @@ libcommon_a_CPPFLAGS =				\
 update-local: Makefile
 
 all_SRCS =					\
+	$(libcommon_a_SOURCES)			\
 	$(bfd_section_stat_SOURCES)		\
 	$(bfd_section_ls_SOURCES)		\
 	$(bfd_section_mv_SOURCES)		\
