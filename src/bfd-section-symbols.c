@@ -36,18 +36,18 @@ struct callback_data {
 
 void callback(bfd * abfd, asection * sect, void * obj)
 {
-	struct callback_data * data;
+        struct callback_data * data;
         long                   storage_needed;
         long                   number_of_symbols;
         long                   i;
         asymbol **             symbol_table;
 
-	BUG_ON(obj == NULL);
-	data = (struct callback_data *) obj;
+        BUG_ON(obj == NULL);
+        data = (struct callback_data *) obj;
 
         BUG_ON(abfd->section_count <= 0);
 
-	message("  %-*d %s\n",
+        message("  %-*d %s\n",
                 ((int) log10(abfd->section_count)) + 1,
                 sect->index,
                 sect->name);
@@ -59,7 +59,7 @@ void callback(bfd * abfd, asection * sect, void * obj)
                 return;
         }
 
-        symbol_table = xmalloc(storage_needed);
+        symbol_table = (asymbol **) xmalloc(storage_needed);
         number_of_symbols =
                 bfd_canonicalize_symtab(abfd, symbol_table);
 
@@ -93,7 +93,7 @@ void help(void)
 
 int main(int argc, char * argv[])
 {
-	struct callback_data data;
+        struct callback_data data;
         int                  i;
         int                  c;
 
@@ -147,7 +147,7 @@ int main(int argc, char * argv[])
                 exit(EXIT_FAILURE);
         }
 
-	bfd_init();
+        bfd_init();
 
         message("\n");
         for (i = optind; i < argc; i++) {
