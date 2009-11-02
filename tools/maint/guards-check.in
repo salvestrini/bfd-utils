@@ -1,4 +1,5 @@
 #! @PERL@
+# -*- perl -*-
 
 #
 # guards-check
@@ -314,7 +315,7 @@ sub guard_check ($$)
 
 	    for my $k (keys %{$guard_ref_ref}) {
 
-		if ($guard_ref_ref->{$k} == $guard) {
+		if ($guard_ref_ref->{$k} eq $guard) {
 		    $files = $files . " " . $k;
 		}
 	    }
