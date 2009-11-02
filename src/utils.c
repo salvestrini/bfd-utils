@@ -28,70 +28,70 @@
 
 const char * BFD_strerror(void)
 {
-	return bfd_errmsg(bfd_get_error());
+        return bfd_errmsg(bfd_get_error());
 }
 
 /* const is forbidden by some bfd_*() prototypes */
 void BFD_dump(bfd * abfd)
 {
-	BUG_ON(abfd == NULL);
+        BUG_ON(abfd == NULL);
 
-	debug("Infos:\n");
-	debug("  Generic:\n");
-	debug("    Name:     %s\n", bfd_get_filename(abfd));
-	debug("    Size:     %d\n", (size_t) bfd_get_size(abfd));
-	debug("    Format:   %d\n", bfd_get_format(abfd));
+        debug("Infos:\n");
+        debug("  Generic:\n");
+        debug("    Name:     %s\n", bfd_get_filename(abfd));
+        debug("    Size:     %d\n", (size_t) bfd_get_size(abfd));
+        debug("    Format:   %d\n", bfd_get_format(abfd));
 
-	if (bfd_get_format(abfd) == bfd_unknown) {
-		return;
-	}
+        if (bfd_get_format(abfd) == bfd_unknown) {
+                return;
+        }
 
-	debug("  Specific:\n");
-	debug("    Symcount: %d\n", bfd_get_symcount(abfd));
-	debug("    Sections: %d\n", bfd_count_sections(abfd));
-	if (bfd_count_sections(abfd)) {
-		struct bfd_section * tmp;
-		int                  count;
+        debug("  Specific:\n");
+        debug("    Symcount: %d\n", bfd_get_symcount(abfd));
+        debug("    Sections: %d\n", bfd_count_sections(abfd));
+        if (bfd_count_sections(abfd)) {
+                struct bfd_section * tmp;
+                int                  count;
 
-		debug("  Sections:\n");
+                debug("  Sections:\n");
 
-		count = 0;
-		for (tmp = abfd->sections; tmp != NULL; tmp = tmp->next) {
-			debug("    Id:     %d\n",
-			      tmp->id);
-			debug("      Name:   %s\n",
-			      bfd_section_name(bfd, tmp));
-			debug("      Size:   %d\n",
-			      (size_t) bfd_section_size(bfd, tmp));
-			count++;
-		}
+                count = 0;
+                for (tmp = abfd->sections; tmp != NULL; tmp = tmp->next) {
+                        debug("    Id:     %d\n",
+                              tmp->id);
+                        debug("      Name:   %s\n",
+                              bfd_section_name(bfd, tmp));
+                        debug("      Size:   %d\n",
+                              (size_t) bfd_section_size(bfd, tmp));
+                        count++;
+                }
 
-		BUG_ON(count != bfd_count_sections(abfd));
-	}
+                BUG_ON(count != bfd_count_sections(abfd));
+        }
 }
 
 struct callback_data {
-	int index;
+        int index;
 };
 
 bfd_boolean callback_find(bfd * abfd, asection * sect, void * obj)
 {
-	int index;
+        int index;
 
-	index = (* (int *) obj);
+        index = (* (int *) obj);
 
-	if (sect->index == index) {
-		return TRUE;
-	}
+        if (sect->index == index) {
+                return TRUE;
+        }
 
-	return FALSE;
+        return FALSE;
 }
 
 asection * BFD_find(bfd * abfd, int index)
 {
-	BUG_ON(abfd != NULL);
+        BUG_ON(abfd != NULL);
 
-	return bfd_sections_find_if(abfd, callback_find, &index);
+        return bfd_sections_find_if(abfd, callback_find, &index);
 }
 
 void version(const char * program_name)
