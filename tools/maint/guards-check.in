@@ -181,12 +181,12 @@ sub usage ($)
     my ($exit_code) = @_;
     my $STREAM = ($exit_code == 0 ? *STDOUT : *STDERR);
     if ($exit_code != 0) {
-	print $STREAM "Try `$ME --help\' for more information.\n";
+        print $STREAM "Try `$ME --help\' for more information.\n";
     } else {
-	print $STREAM <<EOF;
+        print $STREAM <<EOF;
 Usage: $ME [OPTIONS]
 
-    Check headers guard correctness
+Check headers guard correctness
 
 OPTIONS:
 
@@ -211,7 +211,7 @@ sub hint ($)
     my $string = shift;
 
     if ($string ne "") {
-	print STDERR $ME . ": " . $string . "\n";
+        print STDERR $ME . ": " . $string . "\n";
     }
 
     usage 1;
@@ -226,19 +226,19 @@ sub clean_comments ($)
     debug("Cleaning string: \`" . $$string_ref . "'");
 
     if ($$string_ref =~ /^\s*\/\*.*\*\/\s*.*$/) {
-	$$string_ref =~ s/^\s*\/\*.*\*\/\s*//;
+        $$string_ref =~ s/^\s*\/\*.*\*\/\s*//;
     } elsif ($$string_ref =~ /^.*\s*\/\*.*\*\/\s*/) {
-	$$string_ref =~ s/\s*\/\*.*\*\/\s*//;
+        $$string_ref =~ s/\s*\/\*.*\*\/\s*//;
     } elsif ($$string_ref =~ /^.*\s*\/\*.*\*\/\s*.*$/) {
-	$$string_ref =~ s/\s*\/\*.*\*\/\s*/\ /;
+        $$string_ref =~ s/\s*\/\*.*\*\/\s*/\ /;
     } elsif ($$string_ref =~ /\s*\/\/.*$/) {
-	$$string_ref =~ s/\s*\/\/.*$//;
+        $$string_ref =~ s/\s*\/\/.*$//;
     } elsif ($$string_ref =~ /\s*\/\*.*$/) {
-	$$string_ref =~ s/\s*\/\*.*$//;
+        $$string_ref =~ s/\s*\/\*.*$//;
     } elsif ($$string_ref =~ /\*\/.*$/) {
-	$$string_ref =~ s/^.*\*\/\s*//;
+        $$string_ref =~ s/^.*\*\/\s*//;
     } else {
-	# Skip
+        # Skip
     }
 
     debug("Cleaned string: \`" . $$string_ref . "'");
@@ -262,33 +262,33 @@ sub guard_report ($$)
 
     for my $guard (keys %{$guard_lst_ref}) {
 
-	if (length($guard) > $max_length) {
-	    $max_length = length($guard);
-	}
+        if (length($guard) > $max_length) {
+            $max_length = length($guard);
+        }
     }
 
     debug("Maximum guard length: \`" . $max_length . "'");
 
     for my $guard (keys %{$guard_lst_ref}) {
-	message($guard);
+        message($guard);
 
-	for (my $i; $i < ($max_length - length($guard)); $i++) {
-	    message(" ");
-	}
+        for (my $i; $i < ($max_length - length($guard)); $i++) {
+            message(" ");
+        }
 
-	for my $file (keys %{$guard_ref_ref}) {
-	    my @guard_tmp;
+        for my $file (keys %{$guard_ref_ref}) {
+            my @guard_tmp;
 
-	    @guard_tmp = split($guard_ref_ref->{$file}, " ");
+            @guard_tmp = split($guard_ref_ref->{$file}, " ");
 
-	    for my $item (@guard_tmp) {
+            for my $item (@guard_tmp) {
 
-		if ($guard_tmp[$item] == $guard) {
-		    message(" " . $file); # <<< Missing path_clean() sub
-		}
-	    }
-	}
-	message("\n");
+                if ($guard_tmp[$item] == $guard) {
+                    message(" " . $file); # <<< Missing path_clean() sub
+                }
+            }
+        }
+        message("\n");
     }
 
     return 1;
@@ -305,25 +305,25 @@ sub guard_check ($$)
     my $files;
 
     for my $guard (keys %{$guard_lst_ref}) {
-	$files = "";
+        $files = "";
 
-	verbose("Checking guard: \`" . $guard                    .
-		"', is used \`"      . $guard_lst_ref->{$guard} .
-		"' times");
+        verbose("Checking guard: \`" . $guard                    .
+                "', is used \`"      . $guard_lst_ref->{$guard} .
+                "' times");
 
-	if ($guard_lst_ref->{$guard} > 1) {
+        if ($guard_lst_ref->{$guard} > 1) {
 
-	    for my $k (keys %{$guard_ref_ref}) {
+            for my $k (keys %{$guard_ref_ref}) {
 
-		if ($guard_ref_ref->{$k} eq $guard) {
-		    $files = $files . " " . $k;
-		}
-	    }
+                if ($guard_ref_ref->{$k} eq $guard) {
+                    $files = $files . " " . $k;
+                }
+            }
 
-	    warning("Guard \`"                 . $guard .
-		    "' is already define in: " . $files);
+            warning("Guard \`"                 . $guard .
+                    "' is already define in: " . $files);
 
-	}
+        }
     }
 
     return 1;
@@ -349,110 +349,110 @@ sub guard_count($$$)
     my $filehandle;
 
     open($filehandle, "<", $filename)
-	or die "Failed to open file \`" . $filename . "' for read";
+        or die "Failed to open file \`" . $filename . "' for read";
 
     while (<$filehandle>) {
 
-	if ($guard_def != 0) {
-	    last;
-	}
+        if ($guard_def != 0) {
+            last;
+        }
 
-	my $string = $_;
-	$string    =~ s/^\s*//;
-	$string    =~ s/\s*$//;
+        my $string = $_;
+        $string    =~ s/^\s*//;
+        $string    =~ s/\s*$//;
 
-	debug("Parsing string: \`" . $string . "'");
+        debug("Parsing string: \`" . $string . "'");
 
-	if ($string =~ /^\s*$/) {
-	    next;
-	}
+        if ($string =~ /^\s*$/) {
+            next;
+        }
 
-	if (($guard_cond == 1) && ($skip == 0)) {
+        if (($guard_cond == 1) && ($skip == 0)) {
 
-	    if ($string =~ /\s*\/\*.*\*\/\s*/) {
-		debug("Found inline C comment");
+            if ($string =~ /\s*\/\*.*\*\/\s*/) {
+                debug("Found inline C comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /\s*\/\/.*\s*/) {
-		debug("Found inline C++ comment");
+                clean_comments(\$string);
+            } elsif ($string =~ /\s*\/\/.*\s*/) {
+                debug("Found inline C++ comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /\s*\/\*.*/) {
-		debug("Found multiline comment start");
+                clean_comments(\$string);
+            } elsif ($string =~ /\s*\/\*.*/) {
+                debug("Found multiline comment start");
 
-		clean_comments(\$string);
-		$skip = 1;
-	    } else {
-		# Skip
-	    }
+                clean_comments(\$string);
+                $skip = 1;
+            } else {
+                # Skip
+            }
 
-	    if ($string eq "") {
-		next;
-	    }
-	}
+            if ($string eq "") {
+                next;
+            }
+        }
 
-	if (($guard_cond == 1) && ($skip == 1)) {
+        if (($guard_cond == 1) && ($skip == 1)) {
 
-	    if ($string =~ /^\s*(.*[^\/])?\*\/\s*/) {
-		debug("Found multiline comment end");
+            if ($string =~ /^\s*(.*[^\/])?\*\/\s*/) {
+                debug("Found multiline comment end");
 
-		clean_comments(\$string);
-		$skip = 0;
+                clean_comments(\$string);
+                $skip = 0;
 
-		if ($string eq "") {
-		    next;
-		}
-	    }
-	}
+                if ($string eq "") {
+                    next;
+                }
+            }
+        }
 
-	if (($guard_cond == 0) &&
-	    ($string =~ /^\s*\#\s*ifndef\s+[A-Z0-9_]+\s*/)) {
-	    debug("Found first guard conditional entry \`" . $string . "'");
+        if (($guard_cond == 0) &&
+            ($string =~ /^\s*\#\s*ifndef\s+[A-Z0-9_]+\s*/)) {
+            debug("Found first guard conditional entry \`" . $string . "'");
 
-	    $string =~ s/^\s*\#\s*ifndef\s*//;
+            $string =~ s/^\s*\#\s*ifndef\s*//;
 
-	    if ($string =~ /^[A-Z0-9_]+\s+\/\*.*\*\/\s*/) {
-		debug("Found inline comment");
+            if ($string =~ /^[A-Z0-9_]+\s+\/\*.*\*\/\s*/) {
+                debug("Found inline comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /^[A-Z0-9_]+\s+\/\*.*/) {
-		debug("Found multiline comment start");
+                clean_comments(\$string);
+            } elsif ($string =~ /^[A-Z0-9_]+\s+\/\*.*/) {
+                debug("Found multiline comment start");
 
-		clean_comments(\$string);
-		$skip = 1;
-	    } else {
-		# Skip
-	    }
+                clean_comments(\$string);
+                $skip = 1;
+            } else {
+                # Skip
+            }
 
-	    $guard_curr = $string;
-	    $guard_cond = 1;
+            $guard_curr = $string;
+            $guard_cond = 1;
 
-	    next;
-	}
+            next;
+        }
 
-	if (($guard_cond == 1) &&
-	    ($string =~ /^\#\s*define\s+$guard_curr/)) {
-	    debug("Found guard define entry \`" . $string . "'");
+        if (($guard_cond == 1) &&
+            ($string =~ /^\#\s*define\s+$guard_curr/)) {
+            debug("Found guard define entry \`" . $string . "'");
 
-	    $guard_def = 1;
-	    $guard_lst_ref->{$guard_curr}++;
+            $guard_def = 1;
+            $guard_lst_ref->{$guard_curr}++;
 
-	    if ($guard_ref_ref->{$filename} ne "") {
-		$guard_ref_ref->{$filename} = $guard_curr .
+            if ($guard_ref_ref->{$filename} ne "") {
+                $guard_ref_ref->{$filename} = $guard_curr .
                     " "         .
                     $guard_ref_ref->{$filename};
-	    } else {
-		$guard_ref_ref->{$filename} = $guard_curr;
-	    }
+            } else {
+                $guard_ref_ref->{$filename} = $guard_curr;
+            }
 
-	    last;
-	}
+            last;
+        }
 
-	if (($guard_cond == 1) && ($skip == 0)) {
-	    debug("Invalid guard \`" . $guard_curr . "', skipping");
+        if (($guard_cond == 1) && ($skip == 0)) {
+            debug("Invalid guard \`" . $guard_curr . "', skipping");
 
-	    last;
-	}
+            last;
+        }
     }
 
     return 1;
@@ -478,124 +478,124 @@ sub guard_retrieve ($$$)
     my $filehandle;
 
     open($filehandle, "<", $filename)
-	or die "Failed to open file \`" . $filename . "' for read";
+        or die "Failed to open file \`" . $filename . "' for read";
 
     while (<$filehandle>) {
 
-	if ($guard_def != 0) {
-	    last;
-	}
+        if ($guard_def != 0) {
+            last;
+        }
 
-	my $string = $_;
-	$string    =~ s/^\s*//;
-	$string    =~ s/\s*$//;
+        my $string = $_;
+        $string    =~ s/^\s*//;
+        $string    =~ s/\s*$//;
 
-	debug("Parsing string: \`" . $string . "'");
+        debug("Parsing string: \`" . $string . "'");
 
-	if ($string =~ /^\s*$/) {
-	    next;
-	}
+        if ($string =~ /^\s*$/) {
+            next;
+        }
 
-	if (($guard_cond == 1) && ($skip == 0)) {
+        if (($guard_cond == 1) && ($skip == 0)) {
 
-	    if ($string =~ /\s*\/\*.*\*\/\s*/) {
-		debug("Found inline C comment");
+            if ($string =~ /\s*\/\*.*\*\/\s*/) {
+                debug("Found inline C comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /\s*\/\/.*$/) {
-		debug("Found inline C++ comment");
+                clean_comments(\$string);
+            } elsif ($string =~ /\s*\/\/.*$/) {
+                debug("Found inline C++ comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /\s*\/\*.*$/) {
-		debug("Found multiline comment start");
+                clean_comments(\$string);
+            } elsif ($string =~ /\s*\/\*.*$/) {
+                debug("Found multiline comment start");
 
-		clean_comments(\$string);
-		$skip = 1;
-	    } else {
-		# Skip
-	    }
+                clean_comments(\$string);
+                $skip = 1;
+            } else {
+                # Skip
+            }
 
-	    if ($string eq "") {
-		next;
-	    }
-	}
+            if ($string eq "") {
+                next;
+            }
+        }
 
-	if (($guard_cond == 1) && ($skip == 1)) {
+        if (($guard_cond == 1) && ($skip == 1)) {
 
-	    if ($string =~ /^\s*(.*[^\/])?\*\/\s*/) {
-		debug("Found multiline comment end");
+            if ($string =~ /^\s*(.*[^\/])?\*\/\s*/) {
+                debug("Found multiline comment end");
 
-		clean_comments(\$string);
-		$skip = 0;
+                clean_comments(\$string);
+                $skip = 0;
 
-		if ($string eq "") {
-		    next;
-		}
-	    }
-	}
+                if ($string eq "") {
+                    next;
+                }
+            }
+        }
 
-	if (($guard_cond == 0) &&
-	    ($string =~ /^\#\s*ifndef\s+[A-Z0-9_]+/)) {
-	    debug("Found first guard conditional entry \`" .
-		  $string                                  .
-		  "'");
+        if (($guard_cond == 0) &&
+            ($string =~ /^\#\s*ifndef\s+[A-Z0-9_]+/)) {
+            debug("Found first guard conditional entry \`" .
+                  $string                                  .
+                  "'");
 
-	    $string =~ s/^\s*\#\s*ifndef\s*//;
+            $string =~ s/^\s*\#\s*ifndef\s*//;
 
-	    if ($string =~ /^[A-Z0-9_]+\s*\/\*.*\*\/\s*/) {
-		debug("Found inline C comment");
+            if ($string =~ /^[A-Z0-9_]+\s*\/\*.*\*\/\s*/) {
+                debug("Found inline C comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /^[A-Z0-9_]+\s*\/\/.*$/) {
-		debug("Found inline C++ comment");
+                clean_comments(\$string);
+            } elsif ($string =~ /^[A-Z0-9_]+\s*\/\/.*$/) {
+                debug("Found inline C++ comment");
 
-		clean_comments(\$string);
-	    } elsif ($string =~ /^[A-Z0-9_]+\s*\/\*.*/) {
-		debug("Found multiline comment start");
+                clean_comments(\$string);
+            } elsif ($string =~ /^[A-Z0-9_]+\s*\/\*.*/) {
+                debug("Found multiline comment start");
 
-		clean_comments(\$string);
-		$skip = 1;
-	    } else {
-		# Skip
-	    }
+                clean_comments(\$string);
+                $skip = 1;
+            } else {
+                # Skip
+            }
 
-	    $guard_curr = $string;
-	    $guard_cond = 1;
+            $guard_curr = $string;
+            $guard_cond = 1;
 
-	    next;
-	}
+            next;
+        }
 
-	if (($guard_cond == 1) &&
-	    ($string =~ /^\#\s*define\s+$guard_curr/)) {
-	    debug("Found guard define entry \`" . $string ."'");
+        if (($guard_cond == 1) &&
+            ($string =~ /^\#\s*define\s+$guard_curr/)) {
+            debug("Found guard define entry \`" . $string ."'");
 
-	    $guard_def = 1;
-	    last;
-	}
+            $guard_def = 1;
+            last;
+        }
 
-	if (($guard_cond == 1) && ($skip == 0)) {
-	    debug("Invalid guard \`" . $guard_curr . "', skipping");
-	    last;
-	}
+        if (($guard_cond == 1) && ($skip == 0)) {
+            debug("Invalid guard \`" . $guard_curr . "', skipping");
+            last;
+        }
 
     }
 
     close($filehandle);
 
     if ($guard_curr eq "") {
-	warning("Missing guard for file \`" . $filename . "'");
+        warning("Missing guard for file \`" . $filename . "'");
     } else {
 
-	if (($guard_cond == 1) && ($guard_def == 0)) {
-	    warning("Missing guard ("         . $guard_curr .
-		    ") definition in file \`" . $filename   .
-		    "'");
-	} else {
-	    $guard_cnt++;
-	}
+        if (($guard_cond == 1) && ($guard_def == 0)) {
+            warning("Missing guard ("         . $guard_curr .
+                    ") definition in file \`" . $filename   .
+                    "'");
+        } else {
+            $guard_cnt++;
+        }
 
-	$guard_lst_ref->{$guard_curr} = 0;
-	$guard_ref_ref->{$filename}   = "";
+        $guard_lst_ref->{$guard_curr} = 0;
+        $guard_ref_ref->{$filename}   = "";
     }
 
     return 1;
@@ -606,31 +606,43 @@ sub guard_retrieve ($$$)
 
     Getopt::Long::Configure("gnu_compat");
     GetOptions(
-	'p|path=s'  => \@path,
-	'r|report'  => sub { $guard_rep = 1; },
-	'f|fatal'   => sub { warning_set "fatal" },
-	'v|verbose' => sub { verbose_set 1 },
-	'd|debug'   => sub { debug_set 1 },
-	'h|help'    => sub { usage 0 },
-	'version'   => sub { print "$ME ($PACKAGE_NAME) $VERSION\n";exit(0); },
-	) or usage 1;
+        'p|path=s'  => \@path,
+        'r|report'  => sub { $guard_rep = 1; },
+        'f|fatal'   => sub { warning_set "fatal" },
+        'v|verbose' => sub { verbose_set 1 },
+        'd|debug'   => sub { debug_set 1 },
+        'h|help'    => sub { usage 0 },
+        'version'   => sub { print "$ME ($PACKAGE_NAME) $VERSION\n";exit(0); },
+        ) or usage 1;
 
     debug("PASS 1: Filter-out files by extension");
 
     my @tmpfiles;
+    {
+        my $skipped = 0;
+        my $count   = 0;
+        for my $l (0..$#ARGV) {
+            my $infile = $ARGV[$l];
 
-    for my $l (0..$#ARGV) {
-	my $infile = $ARGV[$l];
+            $count++;
 
-        if (!(($infile =~ /^.*\.h$/)     ||
-              ($infile =~ /^.*\.h\+\+$/) ||
-              ($infile =~ /^.*\.hpp$/)   ||
-              ($infile =~ /^.*\.hxx$/))) {
-            warning("Unrecognized extension for \`$infile', skipping ...\n");
-            next;
+            if (!(($infile =~ /^.*\.h$/)     ||
+                  ($infile =~ /^.*\.h\+\+$/) ||
+                  ($infile =~ /^.*\.hpp$/)   ||
+                  ($infile =~ /^.*\.hxx$/))) {
+                warning("Unrecognized extension for \`$infile', " .
+                        "skipping ...\n");
+                $skipped++;
+                next;
+            }
+
+            push(@tmpfiles, $infile);
         }
 
-        push(@tmpfiles, $infile);
+        if ($skipped == $count) {
+            error("All file skipped, there are no files to check ...");
+            exit 1;
+        }
     }
 
     debug("PASS 2: Checking input files existance");
@@ -638,70 +650,72 @@ sub guard_retrieve ($$$)
     my @infiles;
 
     for my $i (0..$#tmpfiles) {
-	my $infile = $tmpfiles[$i];
-	my $wrong  = 1;
+        my $infile = $tmpfiles[$i];
+        my $wrong  = 1;
 
-	for my $k (0..$#path) {
-	    my $tmpfile = $path[$k] . "/" . $infile;
+        for my $k (0..$#path) {
+            my $tmpfile = $path[$k] . "/" . $infile;
 
-            (! -r $tmpfile) and next;
+            if (! -r $tmpfile) {
+                # This file is not in the supplied path
+                next;
+            }
 
-	    push(@infiles, $tmpfile);
-	    $wrong = 0;
-	    last;
-	}
+            push(@infiles, $tmpfile);
+            $wrong = 0;
+            last;
+        }
 
-	if ($wrong) {
-	    error("File \`" . $infile . "' is not readable");
-	    exit(1);
-	}
+        if ($wrong) {
+            error("File \`" . $infile . "' is not readable");
+            exit(1);
+        }
 
-	debug("Adding \`" . $infile . "'");
+        debug("Adding \`" . $infile . "'");
     }
 
     debug(($#infiles + 1) . " files to check");
 
     if ($#infiles < 0) {
-	hint("Missing input file(s)");
+        hint("Missing input file(s)");
     }
 
     debug("PASS 3: Retrieving guard and reference list from input files");
 
     for my $n (0..$#infiles) {
-	if (!guard_retrieve($infiles[$n], \%guard_lst, \%guard_ref)) {
-	    exit(1);
-	}
+        if (!guard_retrieve($infiles[$n], \%guard_lst, \%guard_ref)) {
+            exit(1);
+        }
     }
 
     if ($guard_cnt == 0) {
-	debug("No guard found in input files");
-	exit(0);
+        debug("No guard found in input files");
+        exit(0);
     }
 
     debug("PASS 4: Counting guards from input files");
 
     for my $j (0..$#infiles) {
 
-	if (!guard_count($infiles[$j], \%guard_lst, \%guard_ref)) {
-	    exit(1);
-	}
+        if (!guard_count($infiles[$j], \%guard_lst, \%guard_ref)) {
+            exit(1);
+        }
     }
 
     debug("PASS 5: Checking guard uniqueness");
 
     if (!guard_check(\%guard_lst, \%guard_ref)) {
-	exit(1);
+        exit(1);
     }
 
     if ($guard_rep == 1) {
-	debug("PASS 6: Produce summary report");
+        debug("PASS 6: Produce summary report");
 
-	if (!guard_report(\%guard_lst, \%guard_ref)) {
-	    exit(1);
-	}
+        if (!guard_report(\%guard_lst, \%guard_ref)) {
+            exit(1);
+        }
     }
 
     verbose("All done");
     exit(0);
 }
-
