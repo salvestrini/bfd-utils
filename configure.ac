@@ -81,14 +81,7 @@ AX_PATH_MISSING([WGET],     [wget])
 AX_PATH_MISSING([DNT],      [dnt])
 
 AX_SPLIT_VERSION($PACKAGE_VERSION, AX_MAJOR_VERSION, AX_MINOR_VERSION, AX_MICRO_VERSION, AX_EXTRA_VERSION)
-AC_SUBST([PACKAGE_API],[${AX_MAJOR_VERSION}"."${AX_MINOR_VERSION}])
-
-# Versioned directories, defined here for convenience
-AC_SUBST(pkgvdir,       ["\${datadir}/${PACKAGE}-${PACKAGE_API}"])
-AC_SUBST(pkgvbindir,    ["\${datadir}/${PACKAGE}-${PACKAGE_API}/bin"])
-AC_SUBST(pkgvdatadir,   ["\${datadir}/${PACKAGE}-${PACKAGE_API}/data"])
-AC_SUBST(pkgvlibsdir,   ["\${datadir}/${PACKAGE}-${PACKAGE_API}/libs"])
-AC_SUBST(pkgvpythondir, ["\${pythondir}/${PACKAGE}-${PACKAGE_API}"])
+AX_PACKAGE_API([${AX_MAJOR_VERSION}"."${AX_MINOR_VERSION}])
 
 # XXX FIXME: Replace with proper checks
 AC_SUBST(EXTRA_CPPFLAGS, "-Wall -Werror")
