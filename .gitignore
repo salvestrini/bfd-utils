@@ -40,6 +40,7 @@ Makefile
 /tools/autotools/link-warning.h
 
 /tools/maint/fetch
+/tools/maint/wordwrap-detect
 /tools/maint/whitespace-detect
 /tools/maint/gitlog-to-committers
 /tools/maint/gittag-to-date

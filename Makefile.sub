@@ -60,6 +60,7 @@ do_subst = $(SED) \
 DNT_DB    = $(top_srcdir)/.dnt.db
 DNT_FLAGS = --database=$(DNT_DB) --mono
 
+WORDWRAP_DETECT      = $(top_builddir)/tools/maint/wordwrap-detect
 WHITESPACE_DETECT    = $(top_builddir)/tools/maint/whitespace-detect
 FETCH                = $(top_builddir)/tools/maint/fetch
 GITTAG_TO_DATE       = $(top_builddir)/tools/maint/gittag-to-date

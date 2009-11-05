@@ -138,7 +138,14 @@ maintainer-check-parameters: Makefile $(bin_PROGRAMS)
 maintainer-check-whitespaces: Makefile $(all_SRCS)
 	$(WHITESPACE_DETECT) $(all_SRCS)
 
+maintainer-check-wordwraps: Makefile $(all_SRCS)
+	$(WORDWRAP_DETECT) --tab-size 8 --columns 80 $(all_SRCS)
+
 maintainer-check-guards: Makefile $(all_SRCS)
 	$(GUARDS_CHECK) $(all_SRCS)
 
-maintainer-check-local: Makefile maintainer-check-guards maintainer-check-whitespaces maintainer-check-parameters
+maintainer-check-local: Makefile		\
+	maintainer-check-guards			\
+	maintainer-check-whitespaces		\
+	maintainer-check-wordwraps		\
+	maintainer-check-parameters
