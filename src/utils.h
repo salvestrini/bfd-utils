@@ -1,3 +1,5 @@
+/* -*- c -*- */
+
 /*
  * Copyright (C) 2008, 2009 Francesco Salvestrini
  *
