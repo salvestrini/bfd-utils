@@ -62,11 +62,12 @@ NEWS: $(DNT_DB)
 		$(DNT) $(DNT_FLAGS)						  \
 			show							  \
 			--filter="start>=\"$$start\" and end<=\"$$end\" and done" \
-			--line-format="  %t"					  \
+			--line-format="* %t"					  \
 			--level-fill=""						  \
 			--indent-fill=""					  \
 			--unindent-fill=""					  \
-			--width=0						  \
+			--wrap-fill="  "					  \
+			--width=78						  \
 			--hide-collapsed					  \
 		> NEWS.tmp ;							  \
 		if test ! "x`${SED} -n '$$=' < NEWS.tmp`" = "x" ; then		  \
