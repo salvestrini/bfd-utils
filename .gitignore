@@ -44,6 +44,8 @@ Makefile
 /tools/maint/whitespace-detect
 /tools/maint/gitlog-to-committers
 /tools/maint/gittag-to-date
+/.releases
+/tools/maint/releases-to-news
 /tools/maint/guards-check
 
 /tools/autotools/install-sh

@@ -18,10 +18,6 @@
 ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ##
 
-EXTRA_DIST +=					\
-	TODO NEWS ChangeLog $(DNT_DB) AUTHORS   \
-	bootstrap .bootstrap
-
 ##
 ## Maintainer related targets
 ##
@@ -31,16 +27,22 @@ BUILT_SOURCES += $(top_srcdir)/.version
 $(top_srcdir)/.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 
-dist-hook:
+dist-hook-version:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
+DNT_BIN = $(DNT)
+DNT_DB  = $(top_srcdir)/.dnt.db
+
+EXTRA_DIST += $(DNT_DB) AUTHORS.in
 
 TODO: $(DNT_DB)
-	$(DNT) $(DNT_FLAGS)			\
+	$(DNT_BIN)				\
+	      --database=$(DNT_DB)		\
+	      --mono				\
 	       show				\
 	       --filter="not done"		\
 	       --line-format="* %t"		\
-	       --width=0			\
+	       --width=78			\
 	       --indent-fill=""			\
 	       --unindent-fill=""		\
 	       --level-fill=""			\
@@ -49,53 +51,37 @@ TODO: $(DNT_DB)
 		exit 1 ;			\
 	}
 MAINTAINERCLEANFILES += TODO
+EXTRA_DIST           += TODO
 
-NEWS: $(DNT_DB)
-	start="" ;								  \
-	end="`date +"%Y-%m-%d"`" ;						  \
-	script="$(GITTAG_TO_DATE)" ;						  \
-	rm -f NEWS ;								  \
-	(for i in `$$script | sort -r -k 2 | $(SED) -e 's,\ ,_,g'` ;		  \
-	 do									  \
-		start="`echo $$i | $(SED) -e 's,^.*_,,'`" ;			  \
-		tag="`echo $$i | $(SED) -e 's,_.*$$,,'`" ;			  \
-		$(DNT) $(DNT_FLAGS)						  \
-			show							  \
-			--filter="start>=\"$$start\" and end<=\"$$end\" and done" \
-			--line-format="* %t"					  \
-			--level-fill=""						  \
-			--indent-fill=""					  \
-			--unindent-fill=""					  \
-			--wrap-fill="  "					  \
-			--width=78						  \
-			--hide-collapsed					  \
-		> NEWS.tmp ;							  \
-		if test ! "x`${SED} -n '$$=' < NEWS.tmp`" = "x" ; then		  \
-			echo "$$end ($$tag):" >> NEWS ;				  \
-			cat NEWS.tmp >> NEWS ;					  \
-			echo "" >> NEWS ;					  \
-			echo "$$start -> $$end : Ok" ;				  \
-		else								  \
-			echo "$$start -> $$end : Empty" ;			  \
-		fi ;								  \
-		end="$$start" ;							  \
-	done && rm -f NEWS.tmp) || {						  \
-		rm -f NEWS.tmp ;						  \
-		rm -f NEWS ;							  \
-		exit 1 ;							  \
+.releases:
+	$(GITTAG_TO_DATE) > .releases || {      \
+	        rm -f .releases ;               \
+	        exit 1 ;                        \
+	}
+MAINTAINERCLEANFILES += .releases
+EXTRA_DIST           += .releases
+
+NEWS: $(DNT_DB) .releases
+	DNT_BIN="$(DNT_BIN)"                    \
+	DNT_DB="$(DNT_DB)"                      \
+	$(RELEASES_TO_NEWS) .releases NEWS || { \
+	        rm -f NEWS ;                    \
+	        exit 1 ;                        \
 	}
 MAINTAINERCLEANFILES += NEWS
+EXTRA_DIST           += NEWS
 
 AUTHORS:
-	rm -f AUTHORS                       &&                                  \
-	touch AUTHORS                       &&                                  \
-	cat $(srcdir)/AUTHORS.in >> AUTHORS &&                                  \
-	$(GITLOG_TO_COMMITTERS) | $(SED) -e 's,\(.*\),  \1,' >> AUTHORS &&      \
-	echo "" >> AUTHORS                  || {                                \
-	        rm -f AUTHORS ;                                                 \
-	        exit 1 ;                                                        \
+	rm -f AUTHORS                       &&				   \
+	touch AUTHORS                       &&				   \
+	cat $(srcdir)/AUTHORS.in >> AUTHORS &&				   \
+	$(GITLOG_TO_COMMITTERS) | $(SED) -e 's,\(.*\),  \1,' >> AUTHORS && \
+	echo "" >> AUTHORS                  || {			   \
+	        rm -f AUTHORS ;						   \
+	        exit 1 ;						   \
 	}
 MAINTAINERCLEANFILES += AUTHORS
+EXTRA_DIST           += AUTHORS
 
 ChangeLog:
 	$(GITLOG_TO_CHANGELOG) > ChangeLog || {	\
@@ -103,8 +89,11 @@ ChangeLog:
 		exit 1 ;			\
 	}
 MAINTAINERCLEANFILES += ChangeLog
+EXTRA_DIST           += ChangeLog
 
-dist-hook: NEWS TODO ChangeLog
+dist-hook-files: NEWS TODO ChangeLog
+
+dist-hook: dist-hook-version dist-hook-files
 
 dist-gpg: dist
 	gpg --yes -b --use-agent					   \

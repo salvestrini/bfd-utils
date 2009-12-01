@@ -31,6 +31,7 @@ scripts =					\
 	whitespace-detect			\
 	gitlog-to-committers			\
 	gittag-to-date				\
+	releases-to-news			\
 	guards-check				\
 	$(EXTRA_DIST)
 
@@ -45,6 +46,7 @@ EXTERNAL =					\
 	$(URL_BU)/whitespace-detect.in		\
 	$(URL_BU)/gitlog-to-committers.in	\
 	$(URL_BU)/gittag-to-date.in		\
+	$(URL_BU)/releases-to-news.in		\
 	$(URL_BU)/guards-check.in
 
 update-local: Makefile

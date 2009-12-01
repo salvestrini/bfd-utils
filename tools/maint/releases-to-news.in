@@ -1,0 +1,176 @@
+#! @SHELL@
+
+#
+# releases-to-news
+#
+# Copyright (C) 2008, 2009 Francesco Salvestrini
+#                          Alessandro Massignan
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+
+
+me="releases-to-news"
+version="0.1"
+
+SED="@SED@"
+SORT="@SORT@"
+INPUT=""
+OUTPUT=""
+
+usage()
+{
+        echo "Usage: ${me} INPUT OUTPUT"
+        echo "Type \`${me} --help' for more informations."
+}
+
+while test ! "x${1}" = "x"
+do
+    case $1 in
+        -h|--help)
+            echo "Usage: ${me} INPUT OUTPUT"
+            echo ""
+            echo "Produce NEWS file from git releases"
+            echo ""
+            echo "OPTIONS:"
+            echo ""
+            echo "  -h, --help       display this help and exit"
+            echo "  -v, --version    output version information and exit"
+            echo ""
+            echo "Report bugs to <@PACKAGE_BUGREPORT@>"
+            exit 0
+            ;;
+        -v|--version)
+            echo "${me} (@PACKAGE_NAME@) ${version}"
+            echo "Written by Francesco Salvestrini"
+            echo "           Alessandro Massignan"
+            echo ""
+            echo "This is free software; see the source for copying" \
+                "conditions. There is NO"
+            echo "warranty; not even for MERCHANTABILITY or FITNESS" \
+                "FOR A PARTICULAR PURPOSE."
+            exit 0
+            ;;
+        *)
+            if test "x${INPUT}" = "x"; then
+                # Checking input file
+                if test ! -r $1; then
+                    echo "File \`${1}' is not readable"
+                    exit 1
+                fi
+                INPUT=$1
+            else
+                # Checking ouput file
+                : >$1 || { echo "File \`${1}' is not writable"; exit 1; }
+                OUTPUT=$1
+            fi
+            ;;
+    esac
+    shift
+done
+
+if test "x${INPUT}" = "x" || \
+   test "x${OUTPUT}" = "x"; then
+   usage
+   exit 1
+fi
+
+# Creating temporary file
+TEMP="${OUTPUT}~"
+: >$TEMP || { echo "Failed to create temporary file \`${TEMP}'"; exit 1; }
+
+
+#
+# Start the real job
+#
+SR="" # start release
+SD="" # start date
+ST="" # start time
+ER="" # end release
+ED="" # end date
+ET="" # end time
+
+# Input lines regexp
+RE="^\ *\([^\ ][^\ ]*\)\ \{1,\}\([^\ ][^\ ]*\)\ \{1,\}"
+RE="${RE}\([^\ ][^\ ]*\)\ \{1,\}\([^\ ][^\ ]*\)\ *$"
+
+OLDIFS=$IFS
+IFS='
+'; for i in `$SED -n -e 's/'$RE'/\2\ \3\ \4\ \1/g; ${
+             # Append UNIX epoch time here as start item, so we have
+             # not to do some stuff outside this loop
+             a \
+1971-01-01 00:00:01 +0000 0.0.0
+             }; p;' <$INPUT | $SORT -r`
+do
+    if test "x${ER}" = "x"; then
+        # This is the first entry, save data and skip to the
+        # next line
+        ER=`echo $i | $SED 's/'$RE'/\4/'`
+        ED=`echo $i | $SED 's/'$RE'/\1/'`
+        ET=`echo $i | $SED 's/'$RE'/\2\ \3/'`
+        continue
+    else
+        SR=`echo $i | $SED 's/'$RE'/\4/'`
+        SD=`echo $i | $SED 's/'$RE'/\1/'`
+        ST=`echo $i | $SED 's/'$RE'/\2\ \3/'`
+    fi
+
+    FILTER="end>\"${SD} ${ST}\" and end<=\"${ED} ${ET}\" and done"
+    ${DNT_BIN}                                          \
+        --database=${DNT_DB}                            \
+        --mono                                          \
+        show                                            \
+        --filter="${FILTER}"                            \
+        --line-format="* %t"                            \
+        --level-fill=""                                 \
+        --indent-fill=""                                \
+        --unindent-fill=""                              \
+        --wrap-fill="  "                                \
+        --width=78                                      \
+        --hide-collapsed >$TEMP || {                    \
+          echo "Failed to retrieve info from DB";       \
+          rm -f $TEMP 2>/dev/null;                      \
+          exit 1;                                       \
+        }
+
+    if test "x`${SED} '$=' <${TEMP}`" = "x"; then
+        # Skipping empty tag
+        echo "${SD} ${ST} -> ${ED} ${ET}: empty"
+    else
+        echo "${SD} ${ST} -> ${ED} ${ET}: ok"
+
+        # Write to output file
+        echo "${ED} (${ER}):" >>$OUTPUT
+        cat $TEMP             >>$OUTPUT
+        echo                  >>$OUTPUT
+    fi
+
+    # Now start data become end data
+    ER=$SR
+    ED=$SD
+    ET=$ST
+done
+
+#
+# Restoring the field separator and delete temporary file
+#
+IFS=$OLDIFS
+rm -f $TEMP 2>/dev/null
+
+#
+# All done :-)
+#
+exit 0
