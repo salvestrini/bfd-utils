@@ -26,7 +26,7 @@ SUBDIRS = gnulib
 
 EXTRA_DIST     =
 
-COMMON_CPPFLAGS = -I$(srcdir)/gnulib -I$(srcdir)
+COMMON_CPPFLAGS = -I$(srcdir)/gnulib
 COMMON_CFLAGS   =
 
 ## Programs
@@ -102,6 +102,7 @@ noinst_LIBRARIES =				\
 	libcommon.a
 
 libcommon_a_SOURCES =				\
+	debug.h					\
 	log.c					\
 	log.h					\
 	utils.c					\
