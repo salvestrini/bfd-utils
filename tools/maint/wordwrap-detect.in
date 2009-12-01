@@ -40,7 +40,7 @@ sub hint ($)
     my $string = shift;
 
     if (defined($string)) {
-	print "$ME: " . $string . "\n";
+        print "$ME: " . $string . "\n";
     }
     print "Try `$ME --help' for more information.\n";
 }
@@ -72,11 +72,11 @@ sub version ()
 
 {
     GetOptions(
-	'h|help'       => sub { help(); exit(0); },
-	'v|version'    => sub { print "$ME ($PACKAGE_NAME) $VERSION\n"; exit(0); },
-	't|tab-size=i' => \$tabsize,
-	'c|columns=i'  => \$columns,
-	) or hint("wrong parameters");
+        'h|help'       => sub { help(); exit(0); },
+        'v|version'    => sub { print "$ME ($PACKAGE_NAME) $VERSION\n"; exit(0); },
+        't|tab-size=i' => \$tabsize,
+        'c|columns=i'  => \$columns,
+        ) or hint("wrong parameters");
 
     if ($#ARGV < 0) {
         hint("missing arguments");
@@ -105,7 +105,7 @@ sub version ()
         my $filehandle;
 
         $filename = $ARGV[$i];
-        
+
         if (!open($filehandle, "<", $filename)) {
             print STDERR "$ME: Cannot open \`" . $filename . "' for input\n";
             exit 1;

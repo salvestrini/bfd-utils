@@ -30,7 +30,7 @@ fmt='
         n=%(*authorname)
         e=%(*authoremail)
         s=%(*subject)
-        d=%(*authordate:short)
+        d=%(*authordate:iso8601)
         b=%(*body)
 
         if test "z$t" = z
@@ -41,7 +41,7 @@ fmt='
                 n=%(authorname)
                 e=%(authoremail)
                 s=%(subject)
-                d=%(authordate:short)
+                d=%(authordate:iso8601)
                 b=%(body)
         fi
 	echo "$T $d"
