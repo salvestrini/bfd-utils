@@ -26,8 +26,8 @@ SUBDIRS = gnulib
 
 EXTRA_DIST     =
 
-COMMON_CPPFLAGS =
-COMMON_CFLAGS   = -I $(srcdir)/gnulib
+COMMON_CPPFLAGS = -I$(srcdir)/gnulib -I$(srcdir)
+COMMON_CFLAGS   =
 
 ## Programs
 
