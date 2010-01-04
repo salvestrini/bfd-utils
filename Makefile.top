@@ -30,15 +30,12 @@ $(top_srcdir)/.version:
 dist-hook-version:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
-DNT_BIN = $(DNT)
-DNT_DB  = $(top_srcdir)/.dnt.db
-
 EXTRA_DIST += $(DNT_DB) AUTHORS.in
 
 TODO: $(DNT_DB)
 	$(DNT_BIN)				\
-	      --database=$(DNT_DB)		\
-	      --mono				\
+	       --database=$(DNT_DB)		\
+	       --mono				\
 	       show				\
 	       --filter="not done"		\
 	       --line-format="* %t"		\
@@ -54,19 +51,19 @@ MAINTAINERCLEANFILES += TODO
 EXTRA_DIST           += TODO
 
 .releases:
-	$(GITTAG_TO_DATE) > .releases || {      \
-	        rm -f .releases ;               \
-	        exit 1 ;                        \
+	$(GITTAG_TO_DATE) > .releases || {	\
+		rm -f .releases ;		\
+		exit 1 ;			\
 	}
 MAINTAINERCLEANFILES += .releases
 EXTRA_DIST           += .releases
 
 NEWS: $(DNT_DB) .releases
-	DNT_BIN="$(DNT_BIN)"                    \
-	DNT_DB="$(DNT_DB)"                      \
-	$(RELEASES_TO_NEWS) .releases NEWS || { \
-	        rm -f NEWS ;                    \
-	        exit 1 ;                        \
+	DNT_BIN="$(DNT_BIN)"			\
+	DNT_DB="$(DNT_DB)"			\
+	$(RELEASES_TO_NEWS) .releases NEWS || {	\
+		rm -f NEWS ;			\
+		exit 1 ;			\
 	}
 MAINTAINERCLEANFILES += NEWS
 EXTRA_DIST           += NEWS
@@ -91,7 +88,7 @@ ChangeLog:
 MAINTAINERCLEANFILES += ChangeLog
 EXTRA_DIST           += ChangeLog
 
-dist-hook-files: NEWS TODO ChangeLog
+dist-hook-files: NEWS TODO ChangeLog AUTHORS
 
 dist-hook: dist-hook-version dist-hook-files
 

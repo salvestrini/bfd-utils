@@ -57,6 +57,8 @@ do_subst = $(SED) \
   $(do_subst_MAINTAINER) \
   $(do_subst_SPECIFIC)
 
+DNT_BIN              = $(DNT)
+DNT_DB               = $(top_srcdir)/.dnt.db
 WORDWRAP_DETECT      = $(top_builddir)/tools/maint/wordwrap-detect
 WHITESPACE_DETECT    = $(top_builddir)/tools/maint/whitespace-detect
 FETCH                = $(top_builddir)/tools/maint/fetch
