@@ -17,7 +17,7 @@
 #
 #   A typical example could be the following one:
 #
-#         AX_WITH_PROG(PERL,perl)
+#     AX_WITH_PROG(PERL,perl)
 #
 #   NOTE: This macro is based upon the original AX_WITH_PYTHON macro from
 #   Dustin J. Mitchell <dustin@cs.uchicago.edu>.
@@ -29,7 +29,8 @@
 #
 #   Copying and distribution of this file, with or without modification, are
 #   permitted in any medium without royalty provided the copyright notice
-#   and this notice are preserved.
+#   and this notice are preserved. This file is offered as-is, without any
+#   warranty.
 
 AC_DEFUN([AX_WITH_PROG],[
     AC_PREREQ([2.61])
