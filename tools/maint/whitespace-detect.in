@@ -83,16 +83,49 @@ for my $i (0 .. $#ARGV) {
     my $filehandle;
 
     $filename = $ARGV[$i];
-    
+
     if (!open($filehandle, "<", $filename)) {
 	print STDERR "$program: Cannot open \`" . $filename . "' for input\n";
 	exit 1;
     }
 
     my $lineno = 0;
+    my $skip   = 0;
     while (<$filehandle>) {
+        my $line = $_;
+
         $lineno++;
-	if ($_ =~ /^[ ]*[\t]+[ ]*/) {
+
+        # Check for continuation ending character '\'
+        if ($line =~ /\\$/) {
+
+            # Skip appended lines if previously found
+            if ($skip == 1) {
+                next;
+            }
+            my $tmp = $line;
+
+            # Clean up the string from non-quoting characters
+            $tmp =~ s/\\[\'\"]//g;
+            $tmp =~ s/[^\'\"]//g;
+
+            # Clean up balanced quoting characters
+            $tmp =~ s/\'\'//g;
+            $tmp =~ s/\"\"//g;
+
+            # If the string is empty the ending '\' appends
+            # the next line
+            if ($tmp eq "") {
+                $skip = 1;
+                next;
+            }
+        } else {
+            # This is the last appended line, skip to the next one
+            $skip = 0;
+            next;
+        }
+
+	if (($line =~ /^[ ]*[\t]+[ ]*/) && ($skip == 0)) {
 	    $found = 1;
 	    print STDERR
 		"$program: File \`" . $filename . "' " .
@@ -100,7 +133,7 @@ for my $i (0 .. $#ARGV) {
 
 	    #last;
 	}
-	if ($_ =~ /[ \t]+$/) {
+	if (($line =~ /[ \t]+$/) && ($skip == 0)) {
 	    $found = 1;
 	    print STDERR
 		"$program: File \`" . $filename . "' " .

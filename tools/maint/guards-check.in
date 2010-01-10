@@ -266,29 +266,25 @@ sub guard_report ($$)
             $max_length = length($guard);
         }
     }
-
     debug("Maximum guard length: \`" . $max_length . "'");
 
     for my $guard (keys %{$guard_lst_ref}) {
-        message($guard);
-
-        for (my $i; $i < ($max_length - length($guard)); $i++) {
-            message(" ");
-        }
+        my $s = $guard . (" " x ($max_length - length($guard)));
 
         for my $file (keys %{$guard_ref_ref}) {
             my @guard_tmp;
 
-            @guard_tmp = split($guard_ref_ref->{$file}, " ");
+            @guard_tmp = split(/\s+/, $guard_ref_ref->{$file});
 
             for my $item (@guard_tmp) {
 
-                if ($guard_tmp[$item] == $guard) {
-                    message(" " . $file); # <<< Missing path_clean() sub
+                if ($item eq $guard) {
+                    $s = $s . " " . $file;
+                    $s =~ s,/+,/,g;
                 }
             }
         }
-        message("\n");
+        message($s);
     }
 
     return 1;
@@ -575,6 +571,7 @@ sub guard_retrieve ($$$)
 
         if (($guard_cond == 1) && ($skip == 0)) {
             debug("Invalid guard \`" . $guard_curr . "', skipping");
+            $guard_curr = "";
             last;
         }
 
