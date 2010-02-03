@@ -1,3 +1,4 @@
+## -*- makefile -*-
 ##
 ## Include file for automake
 ##
@@ -88,7 +89,10 @@ ChangeLog:
 MAINTAINERCLEANFILES += ChangeLog
 EXTRA_DIST           += ChangeLog
 
-dist-hook-files: NEWS TODO ChangeLog AUTHORS
+dist-hook-bootstrap:
+	chmod a-x $(distdir)/bootstrap
+
+dist-hook-files: NEWS TODO ChangeLog AUTHORS dist-hook-bootstrap
 
 dist-hook: dist-hook-version dist-hook-files
 
