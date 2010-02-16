@@ -642,7 +642,7 @@ sub guard_retrieve ($$$)
         }
     }
 
-    debug("PASS 2: Checking input files existance");
+    debug("PASS 2: Checking input files");
 
     my @infiles;
 
