@@ -38,7 +38,7 @@ scripts =					\
 ##
 ## Maintainer related targets
 ##
-URL_BU = "http://github.com/salvestrini/build-utils/tree/master/maint"
+URL_BU = "http://github.com/salvestrini/build-utils/raw/master/maint"
 
 EXTERNAL =					\
 	$(URL_BU)/fetch.in			\

@@ -24,7 +24,7 @@ include $(top_srcdir)/Makefile.sub
 ## Maintainer related targets
 ##
 URL_AA = "http://git.savannah.gnu.org/cgit/autoconf-archive.git/plain/m4"
-URL_BU = "http://github.com/salvestrini/build-utils/tree/master/m4"
+URL_BU = "http://github.com/salvestrini/build-utils/raw/master/m4"
 
 EXTERNAL =					\
 	$(URL_BU)/ax_split_version.m4		\
